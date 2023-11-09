@@ -15,7 +15,7 @@ public class RentlinkApplication {
 
 	@GetMapping("/test")
 	public String test() {
-		return "SUCCESS";
+		return "TEST_TEST_TES";
 	}
 
 }
