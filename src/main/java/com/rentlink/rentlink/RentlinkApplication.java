@@ -13,9 +13,4 @@ public class RentlinkApplication {
 		SpringApplication.run(RentlinkApplication.class, args);
 	}
 
-	@GetMapping("/test")
-	public String test() {
-		return "TEST_TEST_TES";
-	}
-
 }
