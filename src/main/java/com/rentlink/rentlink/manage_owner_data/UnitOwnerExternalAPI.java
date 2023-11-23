@@ -6,9 +6,12 @@ import java.util.UUID;
 public interface UnitOwnerExternalAPI {
 
     UnitOwnerDTO getUnitOwner(UUID ownerId);
-    Set<UnitOwnerDTO> getUnitOwners();
-    UnitOwnerDTO addUnitOwner(UnitOwnerDTO unitOwnerDTO);
-    UnitOwnerDTO updateUnitOwner(UnitOwnerDTO unitOwnerDTO);
-    void deleteUnitOwner(UUID ownerId);
 
+    Set<UnitOwnerDTO> getUnitOwners();
+
+    UnitOwnerDTO addUnitOwner(UnitOwnerDTO unitOwnerDTO);
+
+    UnitOwnerDTO updateUnitOwner(UnitOwnerDTO unitOwnerDTO);
+
+    void deleteUnitOwner(UUID ownerId);
 }

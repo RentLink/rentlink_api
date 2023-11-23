@@ -1,13 +1,12 @@
 package com.rentlink.rentlink.manage_owner_data;
 
-import com.rentlink.rentlink.common.enums.IdentityDocument;
 import com.rentlink.rentlink.common.enums.Gender;
+import com.rentlink.rentlink.common.enums.IdentityDocument;
 import com.rentlink.rentlink.common.enums.LegalPersonality;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.Set;
 import java.util.UUID;
+import lombok.*;
 
 @Entity
 @Table(name = "unit_owner", schema = "rentlink")
@@ -62,10 +61,9 @@ class UnitOwner {
 
     private String krs;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy="unitOwner")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "unitOwner")
     private Set<UnitOwnerContactDetails> contactDetails;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy="unitOwner")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "unitOwner")
     private Set<UnitOwnerEmergencyContact> emergencyContacts;
-
 }

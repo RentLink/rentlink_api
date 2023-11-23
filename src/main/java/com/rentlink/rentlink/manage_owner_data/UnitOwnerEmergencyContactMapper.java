@@ -6,5 +6,6 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 interface UnitOwnerEmergencyContactMapper {
     UnitOwnerEmergencyContactDTO toDTO(UnitOwnerEmergencyContact unitOwnerEmergencyContact);
+
     UnitOwnerEmergencyContact toDB(UnitOwnerEmergencyContactDTO unitOwnerEmergencyContactDTO);
 }

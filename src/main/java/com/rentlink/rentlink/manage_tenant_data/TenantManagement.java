@@ -1,12 +1,11 @@
 package com.rentlink.rentlink.manage_tenant_data;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -22,7 +21,9 @@ public class TenantManagement implements TenantExternalAPI {
 
     @Override
     public Set<TenantDTO> getTenants() {
-        return StreamSupport.stream(tenantRepository.findAll().spliterator(), false).map(tenantMapper::toDTO).collect(Collectors.toSet());
+        return StreamSupport.stream(tenantRepository.findAll().spliterator(), false)
+                .map(tenantMapper::toDTO)
+                .collect(Collectors.toSet());
     }
 
     @Override

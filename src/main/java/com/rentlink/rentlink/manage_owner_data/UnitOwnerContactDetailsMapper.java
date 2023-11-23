@@ -7,5 +7,6 @@ import org.mapstruct.MappingConstants;
 interface UnitOwnerContactDetailsMapper {
 
     UnitOwnerContactDetailsDTO toDTO(UnitOwnerContactDetails unitOwnerContactDetails);
+
     UnitOwnerContactDetails toDB(UnitOwnerContactDetailsDTO unitOwnerContactDetailsDTO);
 }

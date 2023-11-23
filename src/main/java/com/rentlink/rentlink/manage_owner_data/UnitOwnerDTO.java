@@ -1,13 +1,12 @@
 package com.rentlink.rentlink.manage_owner_data;
 
-import com.rentlink.rentlink.common.enums.IdentityDocument;
 import com.rentlink.rentlink.common.enums.Gender;
+import com.rentlink.rentlink.common.enums.IdentityDocument;
 import com.rentlink.rentlink.common.enums.LegalPersonality;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.Set;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -33,5 +32,4 @@ public class UnitOwnerDTO {
     private String krs;
     private Set<UnitOwnerContactDetailsDTO> contactDetails;
     private Set<UnitOwnerEmergencyContactDTO> emergencyContacts;
-
 }

@@ -1,12 +1,11 @@
 package com.rentlink.rentlink.manage_owner_data;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +21,9 @@ public class UnitOwnerManagement implements UnitOwnerExternalAPI {
 
     @Override
     public Set<UnitOwnerDTO> getUnitOwners() {
-        return StreamSupport.stream(unitOwnerRepository.findAll().spliterator(), false).map(unitOwnerMapper::toDTO).collect(Collectors.toSet());
+        return StreamSupport.stream(unitOwnerRepository.findAll().spliterator(), false)
+                .map(unitOwnerMapper::toDTO)
+                .collect(Collectors.toSet());
     }
 
     @Override

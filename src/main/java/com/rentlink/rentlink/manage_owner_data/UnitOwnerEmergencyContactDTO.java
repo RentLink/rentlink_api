@@ -1,11 +1,9 @@
 package com.rentlink.rentlink.manage_owner_data;
 
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.UUID;
-
 
 @Setter
 @Getter

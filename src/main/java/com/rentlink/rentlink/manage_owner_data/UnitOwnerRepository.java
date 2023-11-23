@@ -1,9 +1,6 @@
 package com.rentlink.rentlink.manage_owner_data;
 
-
+import java.util.UUID;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.UUID;
-
-interface UnitOwnerRepository extends CrudRepository<UnitOwner, UUID> {
-}
+interface UnitOwnerRepository extends CrudRepository<UnitOwner, UUID> {}

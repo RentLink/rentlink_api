@@ -1,11 +1,10 @@
 package com.rentlink.rentlink.manage_tenant_data;
 
 import jakarta.persistence.*;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @Entity
 @Table(name = "tenant_contact_details", schema = "rentlink")
@@ -24,6 +23,6 @@ class TenantContactDetails {
     private String email;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="tenant_id")
+    @JoinColumn(name = "tenant_id")
     private Tenant tenant;
 }

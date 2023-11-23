@@ -4,11 +4,10 @@ import com.rentlink.rentlink.common.enums.Gender;
 import com.rentlink.rentlink.common.enums.IdentityDocument;
 import com.rentlink.rentlink.common.enums.LegalPersonality;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.Set;
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "tenant", schema = "rentlink")
@@ -63,10 +62,9 @@ class Tenant {
 
     private String krs;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy="tenant")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "tenant")
     private Set<TenantContactDetails> contactDetails;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy="tenant")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "tenant")
     private Set<TenantEmergencyContact> emergencyContacts;
-
 }
