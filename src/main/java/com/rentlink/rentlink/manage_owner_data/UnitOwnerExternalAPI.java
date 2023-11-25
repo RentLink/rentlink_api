@@ -11,7 +11,7 @@ public interface UnitOwnerExternalAPI {
 
     UnitOwnerDTO addUnitOwner(UnitOwnerDTO unitOwnerDTO);
 
-    UnitOwnerDTO updateUnitOwner(UnitOwnerDTO unitOwnerDTO);
+    UnitOwnerDTO updateUnitOwner(UUID id, UnitOwnerDTO unitOwnerDTO);
 
     void deleteUnitOwner(UUID ownerId);
 }

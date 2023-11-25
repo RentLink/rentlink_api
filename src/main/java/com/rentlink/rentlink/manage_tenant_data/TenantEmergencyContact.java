@@ -19,10 +19,7 @@ class TenantEmergencyContact {
 
     private String name;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
-    private String email;
+    private String number;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id")

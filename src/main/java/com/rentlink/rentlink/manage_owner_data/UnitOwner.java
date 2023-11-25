@@ -18,12 +18,14 @@ class UnitOwner {
     private UUID id;
 
     @Column(name = "legal_personality")
+    @Enumerated(EnumType.STRING)
     private LegalPersonality legalPersonality;
 
     private String name;
 
     private String surname;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private String citizenship;
@@ -44,6 +46,7 @@ class UnitOwner {
     private String country;
 
     @Column(name = "identity_document_type")
+    @Enumerated(EnumType.STRING)
     private IdentityDocument identityDocumentType;
 
     @Column(name = "identity_document_number")
@@ -67,8 +70,10 @@ class UnitOwner {
 
     private String krs;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "unitOwner")
-    private Set<UnitOwnerContactDetails> contactDetails;
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    private String email;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "unitOwner")
     private Set<UnitOwnerEmergencyContact> emergencyContacts;

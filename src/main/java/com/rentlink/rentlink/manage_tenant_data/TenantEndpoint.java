@@ -3,6 +3,7 @@ package com.rentlink.rentlink.manage_tenant_data;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,16 +24,18 @@ public class TenantEndpoint {
     }
 
     @PostMapping("/")
+    @ResponseStatus(HttpStatus.CREATED)
     TenantDTO addTenant(@RequestBody TenantDTO tenantDTO) {
         return tenantExternalAPI.addTenant(tenantDTO);
     }
 
-    @PutMapping("/{tenantId}")
+    @PatchMapping("/{tenantId}")
     TenantDTO updateTenant(@RequestBody TenantDTO tenantDTO) {
         return tenantExternalAPI.updateTenant(tenantDTO);
     }
 
     @DeleteMapping("/{tenantId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteTenant(@PathVariable UUID tenantId) {
         tenantExternalAPI.deleteTenant(tenantId);
     }

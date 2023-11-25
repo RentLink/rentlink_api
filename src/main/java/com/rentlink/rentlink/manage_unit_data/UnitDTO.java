@@ -1,5 +1,7 @@
 package com.rentlink.rentlink.manage_unit_data;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +25,7 @@ public class UnitDTO {
     private String additionalInformation;
     private String insuranceNumber;
     private String insuranceCompany;
-    private String insuranceDueDate;
-    private Integer cooperativeFee;
-    private Integer rentalFee;
+    private LocalDate insuranceDueDate;
+    private BigDecimal cooperativeFee;
+    private BigDecimal rentalFee;
 }

@@ -16,24 +16,26 @@ public class UnitOwnerManagement implements UnitOwnerExternalAPI {
 
     @Override
     public UnitOwnerDTO getUnitOwner(UUID ownerId) {
-        return unitOwnerRepository.findById(ownerId).map(unitOwnerMapper::toDTO).get();
+        return unitOwnerRepository.findById(ownerId).map(unitOwnerMapper::map).get();
     }
 
     @Override
     public Set<UnitOwnerDTO> getUnitOwners() {
         return StreamSupport.stream(unitOwnerRepository.findAll().spliterator(), false)
-                .map(unitOwnerMapper::toDTO)
+                .map(unitOwnerMapper::map)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public UnitOwnerDTO addUnitOwner(UnitOwnerDTO unitOwnerDTO) {
-        return unitOwnerMapper.toDTO(unitOwnerRepository.save(unitOwnerMapper.toDB(unitOwnerDTO)));
+        return unitOwnerMapper.map(unitOwnerRepository.save(unitOwnerMapper.map(unitOwnerDTO)));
     }
 
     @Override
-    public UnitOwnerDTO updateUnitOwner(UnitOwnerDTO unitOwnerDTO) {
-        return unitOwnerMapper.toDTO(unitOwnerRepository.save(unitOwnerMapper.toDB(unitOwnerDTO)));
+    public UnitOwnerDTO updateUnitOwner(UUID id, UnitOwnerDTO unitOwnerDTO) {
+        UnitOwner unitOwner = unitOwnerRepository.findById(id).get();
+        unitOwnerMapper.update(unitOwnerDTO, unitOwner);
+        return unitOwnerMapper.map(unitOwnerRepository.save(unitOwner));
     }
 
     @Override

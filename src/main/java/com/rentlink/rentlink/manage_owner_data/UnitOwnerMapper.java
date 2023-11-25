@@ -4,21 +4,21 @@ import java.util.Set;
 import org.mapstruct.*;
 
 @Mapper(
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = {UnitOwnerContactDetailsMapper.class, UnitOwnerEmergencyContactMapper.class})
+        uses = {UnitOwnerEmergencyContactMapper.class})
 interface UnitOwnerMapper {
-    UnitOwnerDTO toDTO(UnitOwner unitOwner);
 
-    UnitOwner toDB(UnitOwnerDTO owner);
+    UnitOwnerDTO map(UnitOwner unitOwner);
+
+    @Mapping(target = "id", ignore = true)
+    UnitOwner map(UnitOwnerDTO owner);
+
+    @InheritConfiguration
+    void update(UnitOwnerDTO ownerDTO, @MappingTarget UnitOwner unitOwner);
 
     @AfterMapping
     default void setUnitOwner(@MappingTarget UnitOwner unitOwner) {
-
-        Set<UnitOwnerContactDetails> unitOwnerContactDetails = unitOwner.getContactDetails();
-        if (unitOwnerContactDetails != null) {
-            unitOwnerContactDetails.forEach(cd -> cd.setUnitOwner(unitOwner));
-        }
-
         Set<UnitOwnerEmergencyContact> unitOwnerEmergencyContacts = unitOwner.getEmergencyContacts();
         if (unitOwnerEmergencyContacts != null) {
             unitOwnerEmergencyContacts.forEach(ec -> ec.setUnitOwner(unitOwner));

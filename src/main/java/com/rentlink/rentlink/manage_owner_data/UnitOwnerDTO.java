@@ -32,6 +32,7 @@ public class UnitOwnerDTO {
     private String nip;
     private String regon;
     private String krs;
-    private Set<UnitOwnerContactDetailsDTO> contactDetails;
+    private String phoneNumber;
+    private String email;
     private Set<UnitOwnerEmergencyContactDTO> emergencyContacts;
 }

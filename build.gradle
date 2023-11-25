@@ -51,7 +51,7 @@ dependencies {
 	implementation "org.mapstruct:mapstruct:$mapStructVersion"
 	annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
-	compileOnly 'org.flywaydb:flyway-core:9.22.3'
+	implementation 'org.flywaydb:flyway-core:9.22.3'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'

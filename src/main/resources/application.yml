@@ -1,9 +1,6 @@
 server:
   port: 8080
 spring:
-  data:
-    rest:
-      default-media-type: application/json
   datasource:
     driver-class-name: org.postgresql.Driver
     username: root

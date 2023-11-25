@@ -3,6 +3,7 @@ package com.rentlink.rentlink.manage_owner_data;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,16 +24,18 @@ class UnitOwnerEndpoint {
     }
 
     @PostMapping("/")
+    @ResponseStatus(HttpStatus.CREATED)
     UnitOwnerDTO addUnitOwner(@RequestBody UnitOwnerDTO unitOwnerDTO) {
         return unitOwnerExternalAPI.addUnitOwner(unitOwnerDTO);
     }
 
-    @PutMapping("/{ownerId}")
-    UnitOwnerDTO updateUnitOwner(@RequestBody UnitOwnerDTO unitOwnerDTO) {
-        return unitOwnerExternalAPI.updateUnitOwner(unitOwnerDTO);
+    @PatchMapping("/{ownerId}")
+    UnitOwnerDTO updateUnitOwner(@PathVariable UUID ownerId, @RequestBody UnitOwnerDTO unitOwnerDTO) {
+        return unitOwnerExternalAPI.updateUnitOwner(ownerId, unitOwnerDTO);
     }
 
     @DeleteMapping("/{ownerId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteUnitOwner(@PathVariable UUID ownerId) {
         unitOwnerExternalAPI.deleteUnitOwner(ownerId);
     }

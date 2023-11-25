@@ -19,12 +19,14 @@ class Tenant {
     private UUID id;
 
     @Column(name = "legal_personality")
+    @Enumerated(EnumType.STRING)
     private LegalPersonality legalPersonality;
 
     private String name;
 
     private String surname;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private String citizenship;
@@ -45,6 +47,7 @@ class Tenant {
     private String country;
 
     @Column(name = "identity_document_type")
+    @Enumerated(EnumType.STRING)
     private IdentityDocument identityDocumentType;
 
     @Column(name = "identity_document_number")
@@ -65,8 +68,10 @@ class Tenant {
 
     private String krs;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "tenant")
-    private Set<TenantContactDetails> contactDetails;
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    private String email;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "tenant")
     private Set<TenantEmergencyContact> emergencyContacts;
