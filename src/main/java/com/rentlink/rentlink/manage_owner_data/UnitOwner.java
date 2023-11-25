@@ -55,6 +55,12 @@ class UnitOwner {
     @Column(name = "bank_account_number")
     private String bankAccountNumber;
 
+    @Column(name = "bank_name")
+    private String bankName;
+
+    @Column(name = "company_name")
+    private String companyName;
+
     private String nip;
 
     private String regon;

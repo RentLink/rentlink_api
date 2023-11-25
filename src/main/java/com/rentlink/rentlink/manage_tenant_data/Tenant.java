@@ -50,11 +50,14 @@ class Tenant {
     @Column(name = "identity_document_number")
     private String identityDocumentNumber;
 
-    @Column(name = "tax_account_number")
-    private String taxAccountNumber;
-
     @Column(name = "bank_account_number")
     private String bankAccountNumber;
+
+    @Column(name = "bank_name")
+    private String bankName;
+
+    @Column(name = "company_name")
+    private String companyName;
 
     private String nip;
 

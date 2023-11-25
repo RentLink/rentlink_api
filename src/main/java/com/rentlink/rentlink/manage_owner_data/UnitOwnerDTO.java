@@ -27,6 +27,8 @@ public class UnitOwnerDTO {
     private String identityDocumentNumber;
     private String taxAccountNumber;
     private String bankAccountNumber;
+    private String bankName;
+    private String companyName;
     private String nip;
     private String regon;
     private String krs;
