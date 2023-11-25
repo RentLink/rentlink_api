@@ -13,8 +13,7 @@ public class AbstractIntegrationTest {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
             .withDatabaseName("rentlink")
             .withUsername("admin")
-            .withPassword("admin")
-            .withReuse(true);
+            .withPassword("admin");
 
     @BeforeAll
     static void beforeAll() {
