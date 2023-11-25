@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS unit_owner
     nip                      VARCHAR(15),
     krs                      VARCHAR(15),
     regon                    VARCHAR(15),
-    number         varchar(20),
+    phone_number         varchar(20),
     email         varchar(255)
 );
 
@@ -29,9 +29,8 @@ CREATE TABLE IF NOT EXISTS unit_owner_emergency_contact
 (
     id            UUID PRIMARY KEY,
     unit_owner_id UUID NOT NULL,
-    phone_number         varchar(20),
+    number         varchar(20),
     name          varchar(255),
-    email         varchar(255),
     FOREIGN KEY (unit_owner_id) REFERENCES unit_owner (id)
 );
 
@@ -56,7 +55,7 @@ CREATE TABLE IF NOT EXISTS tenant
     nip                      VARCHAR(15),
     krs                      VARCHAR(15),
     regon                    VARCHAR(15),
-    number         varchar(20),
+    phone_number         varchar(20),
     email         varchar(255)
 );
 
@@ -66,9 +65,8 @@ CREATE TABLE IF NOT EXISTS tenant_emergency_contact
 (
     id            UUID PRIMARY KEY,
     tenant_id UUID NOT NULL,
-    phone_number         varchar(20),
+    number         varchar(20),
     name          varchar(255),
-    email         varchar(255),
     FOREIGN KEY (tenant_id) REFERENCES tenant (id)
 );
 

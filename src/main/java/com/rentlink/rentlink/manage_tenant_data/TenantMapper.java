@@ -1,6 +1,5 @@
 package com.rentlink.rentlink.manage_tenant_data;
 
-import com.rentlink.rentlink.manage_owner_data.*;
 import java.util.Set;
 import org.mapstruct.*;
 
@@ -9,10 +8,10 @@ import org.mapstruct.*;
         componentModel = MappingConstants.ComponentModel.SPRING,
         uses = {TenantEmergencyContactMapper.class})
 interface TenantMapper {
-    TenantDTO toDTO(Tenant tenant);
+    TenantDTO map(Tenant tenant);
 
     @Mapping(target = "id", ignore = true)
-    Tenant toDB(TenantDTO tenantDTO);
+    Tenant map(TenantDTO tenantDTO);
 
     @InheritConfiguration
     void update(TenantDTO tenantDTO, @MappingTarget Tenant tenant);

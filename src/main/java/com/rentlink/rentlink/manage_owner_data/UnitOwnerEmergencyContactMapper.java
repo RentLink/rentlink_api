@@ -1,11 +1,13 @@
 package com.rentlink.rentlink.manage_owner_data;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 interface UnitOwnerEmergencyContactMapper {
-    UnitOwnerEmergencyContactDTO toDTO(UnitOwnerEmergencyContact unitOwnerEmergencyContact);
+    UnitOwnerEmergencyContactDTO map(UnitOwnerEmergencyContact unitOwnerEmergencyContact);
 
-    UnitOwnerEmergencyContact toDB(UnitOwnerEmergencyContactDTO unitOwnerEmergencyContactDTO);
+    @Mapping(target = "unitOwner", ignore = true)
+    UnitOwnerEmergencyContact map(UnitOwnerEmergencyContactDTO unitOwnerEmergencyContactDTO);
 }

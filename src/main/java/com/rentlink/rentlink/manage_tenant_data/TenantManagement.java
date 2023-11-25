@@ -16,24 +16,24 @@ public class TenantManagement implements TenantExternalAPI {
 
     @Override
     public TenantDTO getTenant(UUID ownerId) {
-        return tenantRepository.findById(ownerId).map(tenantMapper::toDTO).get();
+        return tenantRepository.findById(ownerId).map(tenantMapper::map).get();
     }
 
     @Override
     public Set<TenantDTO> getTenants() {
         return StreamSupport.stream(tenantRepository.findAll().spliterator(), false)
-                .map(tenantMapper::toDTO)
+                .map(tenantMapper::map)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public TenantDTO addTenant(TenantDTO tenantDTO) {
-        return tenantMapper.toDTO(tenantRepository.save(tenantMapper.toDB(tenantDTO)));
+        return tenantMapper.map(tenantRepository.save(tenantMapper.map(tenantDTO)));
     }
 
     @Override
     public TenantDTO updateTenant(TenantDTO tenantDTO) {
-        return tenantMapper.toDTO(tenantRepository.save(tenantMapper.toDB(tenantDTO)));
+        return tenantMapper.map(tenantRepository.save(tenantMapper.map(tenantDTO)));
     }
 
     @Override

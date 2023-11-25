@@ -25,7 +25,6 @@ public class TenantDTO {
     private String country;
     private IdentityDocument identityDocumentType;
     private String identityDocumentNumber;
-    private String taxAccountNumber;
     private String bankAccountNumber;
     private String bankName;
     private String companyName;

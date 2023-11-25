@@ -16,24 +16,24 @@ class UnitManagement implements UnitExternalAPI {
 
     @Override
     public UnitDTO getUnit(UUID unitId) {
-        return unitMapper.toDTO(unitRepository.findById(unitId).get());
+        return unitMapper.map(unitRepository.findById(unitId).get());
     }
 
     @Override
     public Set<UnitDTO> getUnits() {
         return StreamSupport.stream(unitRepository.findAll().spliterator(), true)
-                .map(unitMapper::toDTO)
+                .map(unitMapper::map)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public UnitDTO addUnit(UnitDTO unitDTO) {
-        return unitMapper.toDTO(unitRepository.save(unitMapper.toDB(unitDTO)));
+        return unitMapper.map(unitRepository.save(unitMapper.map(unitDTO)));
     }
 
     @Override
     public UnitDTO updateUnit(UnitDTO unitDTO) {
-        return unitMapper.toDTO(unitRepository.save(unitMapper.toDB(unitDTO)));
+        return unitMapper.map(unitRepository.save(unitMapper.map(unitDTO)));
     }
 
     @Override

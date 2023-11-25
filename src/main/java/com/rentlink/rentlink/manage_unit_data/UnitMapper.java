@@ -6,7 +6,7 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 interface UnitMapper {
 
-    UnitDTO toDTO(Unit unit);
+    UnitDTO map(Unit unit);
 
-    Unit toDB(UnitDTO unitDTO);
+    Unit map(UnitDTO unitDTO);
 }
