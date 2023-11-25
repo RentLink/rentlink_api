@@ -4,6 +4,7 @@ import com.rentlink.rentlink.common.enums.Gender;
 import com.rentlink.rentlink.common.enums.IdentityDocument;
 import com.rentlink.rentlink.common.enums.LegalPersonality;
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
@@ -52,6 +53,12 @@ class Tenant {
 
     @Column(name = "identity_document_number")
     private String identityDocumentNumber;
+
+    @Column(name = "identity_document_issue_date")
+    private LocalDate identityDocumentIssueDate;
+
+    @Column(name = "identity_document_due_date")
+    private LocalDate identityDocumentDueDate;
 
     @Column(name = "bank_account_number")
     private String bankAccountNumber;
