@@ -6,8 +6,10 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 interface UnitOwnerEmergencyContactMapper {
+
     UnitOwnerEmergencyContactDTO map(UnitOwnerEmergencyContact unitOwnerEmergencyContact);
 
     @Mapping(target = "unitOwner", ignore = true)
+    @Mapping(target = "id", ignore = true)
     UnitOwnerEmergencyContact map(UnitOwnerEmergencyContactDTO unitOwnerEmergencyContactDTO);
 }

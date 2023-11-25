@@ -8,6 +8,10 @@ plugins {
 
 }
 
+bootJar{
+	mainClass = 'com.rentlink.rentlink.RentlinkApplication'
+}
+
 group = 'com.rentlink'
 version = '0.0.1-SNAPSHOT'
 
@@ -19,7 +23,7 @@ ext {
 
 
 java {
-	sourceCompatibility = '20'
+	sourceCompatibility = '17'
 }
 
 configurations {
