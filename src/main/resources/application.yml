@@ -5,7 +5,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: root
     password: root
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/rentlink}
   jpa:
     properties:
       hibernate:
@@ -13,6 +13,6 @@ spring:
   flyway:
     password: root
     user: root
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/rentlink}
     schemas: rentlink
 
