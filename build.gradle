@@ -3,13 +3,27 @@ plugins {
 	id 'org.springframework.boot' version '3.1.5'
 	id 'io.spring.dependency-management' version '1.1.3'
 	id 'org.asciidoctor.jvm.convert' version '3.3.2'
+	id 'org.flywaydb.flyway' version '9.22.3'
+	id("com.diffplug.spotless") version "6.22.0"
+
+}
+
+bootJar{
+	mainClass = 'com.rentlink.rentlink.RentlinkApplication'
 }
 
 group = 'com.rentlink'
 version = '0.0.1-SNAPSHOT'
 
+ext {
+	 mapStructVersion = '1.5.5.Final'
+	 spotlessLibVersion = '2.42.0'
+	 spotlessVersion = '6.22.0'
+}
+
+
 java {
-	sourceCompatibility = '21'
+	sourceCompatibility = '17'
 }
 
 configurations {
@@ -22,37 +36,63 @@ repositories {
 	mavenCentral()
 }
 
+test {
+	useJUnitPlatform()
+}
+
 ext {
 	set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-//	implementation 'org.springframework.modulith:spring-modulith-starter-core'
-//	implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
+	implementation 'org.springframework.modulith:spring-modulith-starter-core'
+	implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	implementation "org.mapstruct:mapstruct:$mapStructVersion"
+	annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+	implementation 'org.flywaydb:flyway-core:9.22.3'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
-//	runtimeOnly 'org.springframework.modulith:spring-modulith-actuator'
+	runtimeOnly 'org.springframework.modulith:spring-modulith-actuator'
 //	runtimeOnly 'org.springframework.modulith:spring-modulith-observability'
 	annotationProcessor 'org.projectlombok:lombok'
+	implementation "com.diffplug.spotless:spotless-lib:$spotlessLibVersion"
+	implementation "com.diffplug.spotless:spotless-plugin-gradle:$spotlessVersion"
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-//	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
+	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:postgresql'
 }
 
-//dependencyManagement {
-//	imports {
-//		mavenBom 'org.springframework.modulith:spring-modulith-bom:1.0.2'
-//	}
-//}
+spotless {
+	java {
+		target fileTree('.') {
+			include '**/*.java'
+			exclude '**/build/**', '**/build-*/**'
+		}
+		toggleOffOn()
+		palantirJavaFormat()
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+}
+
+
+dependencyManagement {
+	imports {
+		mavenBom 'org.springframework.modulith:spring-modulith-bom:1.0.2'
+	}
+}
 
 tasks.named('test') {
 	outputs.dir snippetsDir

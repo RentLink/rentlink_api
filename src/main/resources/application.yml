@@ -1,2 +1,18 @@
 server:
   port: 8080
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: root
+    password: root
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/rentlink}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    password: root
+    user: root
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/rentlink}
+    schemas: rentlink
+

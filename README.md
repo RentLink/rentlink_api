@@ -3,3 +3,12 @@
 # rentlink_api
 
 SWAGGER UI: http://localhost:8080/swagger-ui/index.html#/
+
+To run project: 
+```zsh
+docker-compose up -d
+```
+After fetching new version: 
+```zsh
+docker-compose up -d --build rentlink
+```
