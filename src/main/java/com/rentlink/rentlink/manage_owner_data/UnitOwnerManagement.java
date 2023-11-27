@@ -3,27 +3,39 @@ package com.rentlink.rentlink.manage_owner_data;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UnitOwnerManagement implements UnitOwnerExternalAPI {
+class UnitOwnerManagement implements UnitOwnerExternalAPI {
 
     private final UnitOwnerRepository unitOwnerRepository;
     private final UnitOwnerMapper unitOwnerMapper;
 
     @Override
     public UnitOwnerDTO getUnitOwner(UUID ownerId) {
-        return unitOwnerRepository.findById(ownerId).map(unitOwnerMapper::map).get();
+        return unitOwnerRepository
+                .findById(ownerId)
+                .map(unitOwnerMapper::map)
+                .orElseThrow(UnitOwnerNotFoundException::new);
     }
 
     @Override
-    public Set<UnitOwnerDTO> getUnitOwners() {
-        return StreamSupport.stream(unitOwnerRepository.findAll().spliterator(), false)
-                .map(unitOwnerMapper::map)
-                .collect(Collectors.toSet());
+    public Set<UnitOwnerDTO> getUnitOwners(Integer page, Integer pageSize) {
+        Stream<UnitOwner> stream;
+        if (page != null && pageSize != null) {
+            Pageable pageable = PageRequest.of(page, pageSize);
+            stream = StreamSupport.stream(unitOwnerRepository.findAll(pageable).spliterator(), false);
+        } else {
+            stream = unitOwnerRepository.findAll().stream();
+        }
+
+        return stream.map(unitOwnerMapper::map).collect(Collectors.toSet());
     }
 
     @Override
@@ -32,8 +44,8 @@ public class UnitOwnerManagement implements UnitOwnerExternalAPI {
     }
 
     @Override
-    public UnitOwnerDTO updateUnitOwner(UUID id, UnitOwnerDTO unitOwnerDTO) {
-        UnitOwner unitOwner = unitOwnerRepository.findById(id).get();
+    public UnitOwnerDTO patchUnitOwner(UUID id, UnitOwnerDTO unitOwnerDTO) {
+        UnitOwner unitOwner = unitOwnerRepository.findById(id).orElseThrow(UnitOwnerNotFoundException::new);
         unitOwnerMapper.update(unitOwnerDTO, unitOwner);
         return unitOwnerMapper.map(unitOwnerRepository.save(unitOwner));
     }
