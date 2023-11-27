@@ -13,6 +13,11 @@ services:
       - intranet
     ports:
       - "5432:5432"
+    healthcheck:
+      test: "pg_isready -U rentlink"
+      interval: 10s
+      timeout: 3s
+      retries: 10
 
   pg_admin:
     image: dpage/pgadmin4
@@ -24,14 +29,16 @@ services:
     ports:
       - "9090:80"
     depends_on:
-      - database
+      database:
+        condition: service_healthy
 
   rentlink:
     build: .
     links:
       - database:database
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     networks:
       - intranet
     ports:
