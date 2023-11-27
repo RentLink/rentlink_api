@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   database:
-    image: postgres:15.0
+    image: postgres:latest
     volumes:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./pgdata:/var/lib/postgresql/data
@@ -9,15 +9,35 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+    networks:
+      - intranet
     ports:
-      - '5432:5432'
+      - "5432:5432"
+
+  pg_admin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@rentlink.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    volumes:
+      - ./pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "9090:80"
+    depends_on:
+      - database
+
   rentlink:
     build: .
     links:
       - database:database
     depends_on:
       - database
+    networks:
+      - intranet
     ports:
-      - '8080:8080'
+      - "8080:8080"
     environment:
-      DATABASE_URL: jdbc:postgresql://database:5432/rentlink
+      DATABASE_URL: "jdbc:postgresql://database:5432/rentlink"
+
+networks:
+  intranet:
