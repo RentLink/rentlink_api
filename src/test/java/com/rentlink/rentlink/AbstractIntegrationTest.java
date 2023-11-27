@@ -1,14 +1,21 @@
 package com.rentlink.rentlink;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 @SpringBootTest(classes = RentlinkApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AbstractIntegrationTest {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
             .withDatabaseName("rentlink")
@@ -23,6 +30,11 @@ public class AbstractIntegrationTest {
     @AfterAll
     static void afterAll() {
         postgres.stop();
+    }
+
+    @AfterEach
+    void clean() {
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "rentlink.unit_owner");
     }
 
     @DynamicPropertySource

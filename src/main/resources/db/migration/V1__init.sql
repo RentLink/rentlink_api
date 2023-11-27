@@ -32,8 +32,7 @@ CREATE TABLE IF NOT EXISTS unit_owner_emergency_contact
     id            UUID PRIMARY KEY,
     unit_owner_id UUID NOT NULL,
     number         varchar(20),
-    name          varchar(255),
-    FOREIGN KEY (unit_owner_id) REFERENCES unit_owner (id)
+    name          varchar(255)
 );
 
 CREATE TABLE IF NOT EXISTS tenant
@@ -70,8 +69,7 @@ CREATE TABLE IF NOT EXISTS tenant_emergency_contact
     id            UUID PRIMARY KEY,
     tenant_id UUID NOT NULL,
     number         varchar(20),
-    name          varchar(255),
-    FOREIGN KEY (tenant_id) REFERENCES tenant (id)
+    name          varchar(255)
 );
 
 

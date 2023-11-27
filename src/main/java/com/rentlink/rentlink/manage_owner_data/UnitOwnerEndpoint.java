@@ -18,9 +18,18 @@ class UnitOwnerEndpoint {
         return unitOwnerExternalAPI.getUnitOwner(ownerId);
     }
 
-    @GetMapping("/")
+    @GetMapping(
+            value = "",
+            params = {"page", "size"})
+    Set<UnitOwnerDTO> getUnitOwners(
+            @RequestParam(value = "page", required = false) int page,
+            @RequestParam(value = "size", required = false) int size) {
+        return unitOwnerExternalAPI.getUnitOwners(page - 1, size);
+    }
+
+    @GetMapping(value = "/")
     Set<UnitOwnerDTO> getUnitOwners() {
-        return unitOwnerExternalAPI.getUnitOwners();
+        return unitOwnerExternalAPI.getUnitOwners(null, null);
     }
 
     @PostMapping("/")
@@ -31,7 +40,7 @@ class UnitOwnerEndpoint {
 
     @PatchMapping("/{ownerId}")
     UnitOwnerDTO updateUnitOwner(@PathVariable UUID ownerId, @RequestBody UnitOwnerDTO unitOwnerDTO) {
-        return unitOwnerExternalAPI.updateUnitOwner(ownerId, unitOwnerDTO);
+        return unitOwnerExternalAPI.patchUnitOwner(ownerId, unitOwnerDTO);
     }
 
     @DeleteMapping("/{ownerId}")
