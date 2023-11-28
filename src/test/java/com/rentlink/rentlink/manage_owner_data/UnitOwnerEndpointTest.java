@@ -161,4 +161,20 @@ class UnitOwnerEndpointTest extends AbstractIntegrationTest implements DataGener
         assertEquals(getResponseAfterPach.email(), patchResponse.email());
         assertEquals(getResponseAfterPach.emergencyContacts(), patchResponse.emergencyContacts());
     }
+
+    @Test
+    void testDelete() {
+        UnitOwnerDTO postResponse =
+                restTemplate.postForObject("/api/owner/", generateOne(UnitOwnerDTO.class), UnitOwnerDTO.class);
+
+        UnitOwnerDTO getResponseAfterPost =
+                restTemplate.getForObject("/api/owner/" + postResponse.id(), UnitOwnerDTO.class);
+        assertEquals(postResponse, getResponseAfterPost);
+
+        restTemplate.delete("/api/owner/" + postResponse.id());
+
+        ResponseEntity<UnitOwnerDTO> getResponseAfterDelete =
+                restTemplate.getForEntity("/api/owner/" + postResponse.id(), UnitOwnerDTO.class);
+        assertEquals(HttpStatusCode.valueOf(404), getResponseAfterDelete.getStatusCode());
+    }
 }

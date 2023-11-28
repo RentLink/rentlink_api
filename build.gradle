@@ -81,6 +81,8 @@ spotless {
 			include '**/*.java'
 			exclude '**/build/**', '**/build-*/**'
 		}
+//		indentWithSpaces(4)
+//		indentWithTabs(2)
 		toggleOffOn()
 		palantirJavaFormat()
 		removeUnusedImports()
