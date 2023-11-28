@@ -1,4 +1,4 @@
-package com.rentlink.rentlink.manage_owner_data;
+package com.rentlink.rentlink.manage_tenant_data;
 
 import com.rentlink.rentlink.common.ErrorMessage;
 import com.rentlink.rentlink.common.enums.ExceptionCode;
@@ -8,20 +8,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice(assignableTypes = UnitOwnerEndpoint.class)
+@ControllerAdvice(assignableTypes = TenantEndpoint.class)
 @Slf4j
-public class UnitOwnerExceptionHandler {
+class TenantExceptionHandler {
 
-    @ExceptionHandler(UnitOwnerNotFoundException.class)
-    public ResponseEntity<ErrorMessage> handleNotFound(UnitOwnerNotFoundException ex) {
+    @ExceptionHandler(TenantNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleNotFound(TenantNotFoundException ex) {
         return ResponseEntity.status(HttpStatusCode.valueOf(404))
                 .body(ErrorMessage.fromExceptionCode(ex.getExceptionCode()));
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorMessage> handleNotFound(RuntimeException ex) {
-        log.error("Unexpected error in Unit Owner API", ex);
+        log.error("Unexpected error in Tenant API", ex);
         return ResponseEntity.status(HttpStatusCode.valueOf(500))
-                .body(ErrorMessage.fromExceptionCode(ExceptionCode.UNIT_OWNER_UNEXPECTED_ERROR));
+                .body(ErrorMessage.fromExceptionCode(ExceptionCode.TENANT_UNEXPECTED_ERROR));
     }
 }

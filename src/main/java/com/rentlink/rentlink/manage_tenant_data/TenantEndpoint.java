@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/tenant")
 @RequiredArgsConstructor
-public class TenantEndpoint {
+class TenantEndpoint {
 
     private final TenantExternalAPI tenantExternalAPI;
 
@@ -20,7 +20,16 @@ public class TenantEndpoint {
 
     @GetMapping("/")
     Set<TenantDTO> getTenants() {
-        return tenantExternalAPI.getTenants();
+        return tenantExternalAPI.getTenants(null, null);
+    }
+
+    @GetMapping(
+            value = "",
+            params = {"page", "size"})
+    Set<TenantDTO> getTenants(
+            @RequestParam(value = "page", required = false) int page,
+            @RequestParam(value = "size", required = false) int size) {
+        return tenantExternalAPI.getTenants(page - 1, size);
     }
 
     @PostMapping("/")
@@ -30,8 +39,8 @@ public class TenantEndpoint {
     }
 
     @PatchMapping("/{tenantId}")
-    TenantDTO updateTenant(@RequestBody TenantDTO tenantDTO) {
-        return tenantExternalAPI.updateTenant(tenantDTO);
+    TenantDTO updateTenant(@PathVariable UUID tenantId, @RequestBody TenantDTO tenantDTO) {
+        return tenantExternalAPI.patchTenant(tenantId, tenantDTO);
     }
 
     @DeleteMapping("/{tenantId}")

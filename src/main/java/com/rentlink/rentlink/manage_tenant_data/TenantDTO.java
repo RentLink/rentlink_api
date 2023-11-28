@@ -6,35 +6,30 @@ import com.rentlink.rentlink.common.enums.LegalPersonality;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class TenantDTO {
-    private UUID id;
-    private LegalPersonality legalPersonality;
-    private String name;
-    private String surname;
-    private Gender gender;
-    private String citizenship;
-    private String city;
-    private String postalCode;
-    private String street;
-    private String buildingNumber;
-    private String apartmentNumber;
-    private String country;
-    private IdentityDocument identityDocumentType;
-    private String identityDocumentNumber;
-    private LocalDate identityDocumentIssueDate;
-    private LocalDate identityDocumentDueDate;
-    private String bankAccountNumber;
-    private String bankName;
-    private String companyName;
-    private String nip;
-    private String regon;
-    private String krs;
-    private String phoneNumber;
-    private String email;
-    private Set<TenantEmergencyContactDTO> emergencyContacts;
-}
+record TenantDTO(
+        UUID id,
+        LegalPersonality legalPersonality,
+        String name,
+        String surname,
+        Gender gender,
+        String citizenship,
+        String city,
+        String postalCode,
+        String street,
+        String buildingNumber,
+        String apartmentNumber,
+        String country,
+        IdentityDocument identityDocumentType,
+        String identityDocumentNumber,
+        LocalDate identityDocumentIssueDate,
+        LocalDate identityDocumentDueDate,
+        String bankAccountNumber,
+        String bankName,
+        String companyName,
+        String nip,
+        String regon,
+        String krs,
+        String phoneNumber,
+        String email,
+        Set<TenantEmergencyContactDTO> emergencyContacts) {}
