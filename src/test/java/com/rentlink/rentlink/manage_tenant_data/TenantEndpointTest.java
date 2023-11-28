@@ -157,4 +157,19 @@ class TenantEndpointTest extends AbstractIntegrationTest implements DataGenerato
         assertEquals(getResponseAfterPach.email(), patchResponse.email());
         assertEquals(getResponseAfterPach.emergencyContacts(), patchResponse.emergencyContacts());
     }
+
+    @Test
+    void testDelete() {
+        TenantDTO postResponse =
+                restTemplate.postForObject("/api/tenant/", generateOne(TenantDTO.class), TenantDTO.class);
+
+        TenantDTO getResponseAfterPost = restTemplate.getForObject("/api/tenant/" + postResponse.id(), TenantDTO.class);
+        assertEquals(postResponse, getResponseAfterPost);
+
+        restTemplate.delete("/api/tenant/" + postResponse.id());
+
+        ResponseEntity<TenantDTO> getResponseAfterDelete =
+                restTemplate.getForEntity("/api/tenant/" + postResponse.id(), TenantDTO.class);
+        assertEquals(HttpStatusCode.valueOf(404), getResponseAfterDelete.getStatusCode());
+    }
 }
