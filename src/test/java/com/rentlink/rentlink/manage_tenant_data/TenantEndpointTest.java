@@ -1,4 +1,4 @@
-package com.rentlink.rentlink.manage_owner_data;
+package com.rentlink.rentlink.manage_tenant_data;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,13 +10,13 @@ import com.rentlink.rentlink.common.ErrorMessage;
 import com.rentlink.rentlink.utils.DataGenerator;
 import java.util.List;
 import java.util.UUID;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
-class UnitOwnerEndpointTest extends AbstractIntegrationTest implements DataGenerator<UnitOwnerDTO> {
+class TenantEndpointTest extends AbstractIntegrationTest implements DataGenerator<TenantDTO> {
 
     @Autowired
     TestRestTemplate restTemplate;
@@ -26,43 +26,43 @@ class UnitOwnerEndpointTest extends AbstractIntegrationTest implements DataGener
 
     @Test
     void testGetAll() throws JsonProcessingException {
-        generateList(UnitOwnerDTO.class, 20)
-                .forEach(ownerDTO -> restTemplate.postForObject("/api/owner/", ownerDTO, UnitOwnerDTO.class));
-        ResponseEntity<String> resp = restTemplate.getForEntity("/api/owner/", String.class);
+        generateList(TenantDTO.class, 20)
+                .forEach(ownerDTO -> restTemplate.postForObject("/api/tenant/", ownerDTO, TenantDTO.class));
+        ResponseEntity<String> resp = restTemplate.getForEntity("/api/tenant/", String.class);
         assertNotNull(resp.getBody());
-        List<UnitOwnerDTO> ownerDTOS = objectMapper.readValue(resp.getBody(), new TypeReference<>() {});
+        List<TenantDTO> ownerDTOS = objectMapper.readValue(resp.getBody(), new TypeReference<>() {});
         assertEquals(20, ownerDTOS.size());
     }
 
     @Test
     void testPagination() throws JsonProcessingException {
-        generateList(UnitOwnerDTO.class, 10)
-                .forEach(ownerDTO -> restTemplate.postForObject("/api/owner/", ownerDTO, UnitOwnerDTO.class));
-        ResponseEntity<String> resp = restTemplate.getForEntity("/api/owner?page=1&size=5", String.class);
+        generateList(TenantDTO.class, 10)
+                .forEach(ownerDTO -> restTemplate.postForObject("/api/tenant/", ownerDTO, TenantDTO.class));
+        ResponseEntity<String> resp = restTemplate.getForEntity("/api/tenant?page=1&size=5", String.class);
         assertNotNull(resp.getBody());
-        List<UnitOwnerDTO> ownerDTOS = objectMapper.readValue(resp.getBody(), new TypeReference<>() {});
+        List<TenantDTO> ownerDTOS = objectMapper.readValue(resp.getBody(), new TypeReference<>() {});
         assertEquals(5, ownerDTOS.size());
     }
 
     @Test
     void test404() {
         ResponseEntity<ErrorMessage> resp =
-                restTemplate.getForEntity("/api/owner/" + UUID.randomUUID(), ErrorMessage.class);
+                restTemplate.getForEntity("/api/tenant/" + UUID.randomUUID(), ErrorMessage.class);
         assertEquals(HttpStatusCode.valueOf(404), resp.getStatusCode());
         assertNotNull(resp.getBody());
-        assertEquals("UNIT_OWNER_NOT_FOUND", resp.getBody().code());
+        assertEquals("TENANT_NOT_FOUND", resp.getBody().code());
     }
 
     @Test
     void testPost() throws JsonProcessingException {
-        UnitOwnerDTO unitOwnerDTO = generateOne(UnitOwnerDTO.class);
-        restTemplate.postForObject("/api/owner/", unitOwnerDTO, UnitOwnerDTO.class);
+        TenantDTO unitOwnerDTO = generateOne(TenantDTO.class);
+        restTemplate.postForObject("/api/tenant/", unitOwnerDTO, TenantDTO.class);
 
-        ResponseEntity<String> resp = restTemplate.getForEntity("/api/owner/", String.class);
+        ResponseEntity<String> resp = restTemplate.getForEntity("/api/tenant/", String.class);
         assertNotNull(resp.getBody());
-        List<UnitOwnerDTO> ownerDTOS = objectMapper.readValue(resp.getBody(), new TypeReference<>() {});
+        List<TenantDTO> ownerDTOS = objectMapper.readValue(resp.getBody(), new TypeReference<>() {});
         assertEquals(1, ownerDTOS.size());
-        UnitOwnerDTO responseUnitOwner = ownerDTOS.get(0);
+        TenantDTO responseUnitOwner = ownerDTOS.get(0);
         assertNotEquals(unitOwnerDTO.id(), responseUnitOwner.id());
         assertEquals(unitOwnerDTO.legalPersonality(), responseUnitOwner.legalPersonality());
         assertEquals(unitOwnerDTO.name(), responseUnitOwner.name());
@@ -79,7 +79,6 @@ class UnitOwnerEndpointTest extends AbstractIntegrationTest implements DataGener
         assertEquals(unitOwnerDTO.identityDocumentNumber(), responseUnitOwner.identityDocumentNumber());
         assertEquals(unitOwnerDTO.identityDocumentDueDate(), responseUnitOwner.identityDocumentDueDate());
         assertEquals(unitOwnerDTO.identityDocumentIssueDate(), responseUnitOwner.identityDocumentIssueDate());
-        assertEquals(unitOwnerDTO.taxAccountNumber(), responseUnitOwner.taxAccountNumber());
         assertEquals(unitOwnerDTO.bankAccountNumber(), responseUnitOwner.bankAccountNumber());
         assertEquals(unitOwnerDTO.bankName(), responseUnitOwner.bankName());
         assertEquals(unitOwnerDTO.companyName(), responseUnitOwner.companyName());
@@ -93,10 +92,9 @@ class UnitOwnerEndpointTest extends AbstractIntegrationTest implements DataGener
 
     @Test
     void testPatch() {
-        UnitOwnerDTO postResponse =
-                restTemplate.postForObject("/api/owner/", generateOne(UnitOwnerDTO.class), UnitOwnerDTO.class);
-        UnitOwnerDTO getResponseAfterPost =
-                restTemplate.getForObject("/api/owner/" + postResponse.id(), UnitOwnerDTO.class);
+        TenantDTO postResponse =
+                restTemplate.postForObject("/api/tenant/", generateOne(TenantDTO.class), TenantDTO.class);
+        TenantDTO getResponseAfterPost = restTemplate.getForObject("/api/tenant/" + postResponse.id(), TenantDTO.class);
 
         assertEquals(getResponseAfterPost.id(), postResponse.id());
         assertEquals(getResponseAfterPost.legalPersonality(), postResponse.legalPersonality());
@@ -114,7 +112,6 @@ class UnitOwnerEndpointTest extends AbstractIntegrationTest implements DataGener
         assertEquals(getResponseAfterPost.identityDocumentNumber(), postResponse.identityDocumentNumber());
         assertEquals(getResponseAfterPost.identityDocumentDueDate(), postResponse.identityDocumentDueDate());
         assertEquals(getResponseAfterPost.identityDocumentIssueDate(), postResponse.identityDocumentIssueDate());
-        assertEquals(getResponseAfterPost.taxAccountNumber(), postResponse.taxAccountNumber());
         assertEquals(getResponseAfterPost.bankAccountNumber(), postResponse.bankAccountNumber());
         assertEquals(getResponseAfterPost.bankName(), postResponse.bankName());
         assertEquals(getResponseAfterPost.companyName(), postResponse.companyName());
@@ -125,14 +122,14 @@ class UnitOwnerEndpointTest extends AbstractIntegrationTest implements DataGener
         assertEquals(getResponseAfterPost.email(), postResponse.email());
         assertEquals(getResponseAfterPost.emergencyContacts(), postResponse.emergencyContacts());
 
-        UnitOwnerDTO patch = new UnitOwnerDTO(
+        TenantDTO patch = new TenantDTO(
                 null, null, "TEST", "TEST", null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null);
 
-        UnitOwnerDTO patchResponse =
-                restTemplate.patchForObject("/api/owner/" + postResponse.id(), patch, UnitOwnerDTO.class);
-        UnitOwnerDTO getResponseAfterPach =
-                restTemplate.getForObject("/api/owner/" + patchResponse.id(), UnitOwnerDTO.class);
+        TenantDTO patchResponse =
+                restTemplate.patchForObject("/api/tenant/" + postResponse.id(), patch, TenantDTO.class);
+        TenantDTO getResponseAfterPach =
+                restTemplate.getForObject("/api/tenant/" + patchResponse.id(), TenantDTO.class);
 
         assertEquals(getResponseAfterPach.id(), patchResponse.id());
         assertEquals(getResponseAfterPach.legalPersonality(), patchResponse.legalPersonality());
@@ -150,7 +147,6 @@ class UnitOwnerEndpointTest extends AbstractIntegrationTest implements DataGener
         assertEquals(getResponseAfterPach.identityDocumentNumber(), patchResponse.identityDocumentNumber());
         assertEquals(getResponseAfterPach.identityDocumentDueDate(), patchResponse.identityDocumentDueDate());
         assertEquals(getResponseAfterPach.identityDocumentIssueDate(), patchResponse.identityDocumentIssueDate());
-        assertEquals(getResponseAfterPach.taxAccountNumber(), patchResponse.taxAccountNumber());
         assertEquals(getResponseAfterPach.bankAccountNumber(), patchResponse.bankAccountNumber());
         assertEquals(getResponseAfterPach.bankName(), patchResponse.bankName());
         assertEquals(getResponseAfterPach.companyName(), patchResponse.companyName());

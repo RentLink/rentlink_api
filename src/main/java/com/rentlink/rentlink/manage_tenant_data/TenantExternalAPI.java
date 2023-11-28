@@ -3,15 +3,15 @@ package com.rentlink.rentlink.manage_tenant_data;
 import java.util.Set;
 import java.util.UUID;
 
-public interface TenantExternalAPI {
+interface TenantExternalAPI {
 
     TenantDTO getTenant(UUID tenantId);
 
-    Set<TenantDTO> getTenants();
+    Set<TenantDTO> getTenants(Integer page, Integer pageSize);
 
     TenantDTO addTenant(TenantDTO tenantDTO);
 
-    TenantDTO updateTenant(TenantDTO tenantDTO);
+    TenantDTO patchTenant(UUID id, TenantDTO tenantDTO);
 
     void deleteTenant(UUID tenantId);
 }
