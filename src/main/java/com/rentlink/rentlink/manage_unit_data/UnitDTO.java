@@ -3,29 +3,24 @@ package com.rentlink.rentlink.manage_unit_data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class UnitDTO {
-    private UUID id;
-    private String name;
-    private UnitType unitType;
-    private RentalType rentalType;
-    private HeatingType heatingType;
-    private Integer surface;
-    private Short roomsNo;
-    private String city;
-    private String postalCode;
-    private String street;
-    private String buildingNumber;
-    private String apartmentNumber;
-    private String country;
-    private String additionalInformation;
-    private String insuranceNumber;
-    private String insuranceCompany;
-    private LocalDate insuranceDueDate;
-    private BigDecimal cooperativeFee;
-    private BigDecimal rentalFee;
-}
+record UnitDTO(
+        UUID id,
+        String name,
+        UnitType unitType,
+        RentalType rentalType,
+        HeatingType heatingType,
+        Integer surface,
+        Short roomsNo,
+        String city,
+        String postalCode,
+        String street,
+        String buildingNumber,
+        String apartmentNumber,
+        String country,
+        String additionalInformation,
+        String insuranceNumber,
+        String insuranceCompany,
+        LocalDate insuranceDueDate,
+        BigDecimal cooperativeFee,
+        BigDecimal rentalFee) {}

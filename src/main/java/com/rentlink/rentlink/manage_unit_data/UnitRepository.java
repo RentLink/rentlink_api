@@ -1,6 +1,6 @@
 package com.rentlink.rentlink.manage_unit_data;
 
 import java.util.UUID;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-interface UnitRepository extends CrudRepository<Unit, UUID> {}
+interface UnitRepository extends JpaRepository<Unit, UUID> {}

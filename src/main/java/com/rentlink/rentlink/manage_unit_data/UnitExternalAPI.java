@@ -6,7 +6,7 @@ import java.util.UUID;
 interface UnitExternalAPI {
     UnitDTO getUnit(UUID unitId);
 
-    Set<UnitDTO> getUnits();
+    Set<UnitDTO> getUnits(Integer page, Integer pageSize);
 
     UnitDTO addUnit(UnitDTO unitDTO);
 
