@@ -3,8 +3,11 @@ package com.rentlink.rentlink.manage_unit_data;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,14 +19,20 @@ class UnitManagement implements UnitExternalAPI {
 
     @Override
     public UnitDTO getUnit(UUID unitId) {
-        return unitMapper.map(unitRepository.findById(unitId).get());
+        return unitMapper.map(unitRepository.findById(unitId).orElseThrow(UnitNotFoundException::new));
     }
 
     @Override
-    public Set<UnitDTO> getUnits() {
-        return StreamSupport.stream(unitRepository.findAll().spliterator(), true)
-                .map(unitMapper::map)
-                .collect(Collectors.toSet());
+    public Set<UnitDTO> getUnits(Integer page, Integer pageSize) {
+        Stream<Unit> stream;
+        if (page != null && pageSize != null) {
+            Pageable pageable = PageRequest.of(page, pageSize);
+            stream = StreamSupport.stream(unitRepository.findAll(pageable).spliterator(), false);
+        } else {
+            stream = unitRepository.findAll().stream();
+        }
+
+        return stream.map(unitMapper::map).collect(Collectors.toSet());
     }
 
     @Override

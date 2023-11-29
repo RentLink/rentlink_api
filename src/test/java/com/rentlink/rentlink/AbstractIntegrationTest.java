@@ -36,7 +36,7 @@ public class AbstractIntegrationTest {
 
     @AfterEach
     void clean() {
-        JdbcTestUtils.deleteFromTables(jdbcTemplate, "rentlink.unit_owner", "rentlink.tenant");
+        JdbcTestUtils.deleteFromTables(jdbcTemplate, "rentlink.unit_owner", "rentlink.tenant", "rentlink.unit");
     }
 
     @DynamicPropertySource

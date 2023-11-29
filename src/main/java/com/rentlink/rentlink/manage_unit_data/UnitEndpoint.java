@@ -19,7 +19,16 @@ class UnitEndpoint {
 
     @GetMapping("/")
     Set<UnitDTO> getTenants() {
-        return unitExternalAPI.getUnits();
+        return unitExternalAPI.getUnits(null, null);
+    }
+
+    @GetMapping(
+            value = "",
+            params = {"page", "size"})
+    Set<UnitDTO> getTenants(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size) {
+        return unitExternalAPI.getUnits(page - 1, size);
     }
 
     @PostMapping("/")
