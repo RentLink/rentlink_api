@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/tenant")
 @RequiredArgsConstructor
-@CrossOrigin
 class TenantEndpoint {
 
     private final TenantExternalAPI tenantExternalAPI;
