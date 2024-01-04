@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/unit")
 @RequiredArgsConstructor
+@CrossOrigin
 class UnitEndpoint {
 
     private final UnitExternalAPI unitExternalAPI;
