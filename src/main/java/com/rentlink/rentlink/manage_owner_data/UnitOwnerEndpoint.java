@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/owner")
 @RequiredArgsConstructor
+@CrossOrigin
 class UnitOwnerEndpoint {
 
     private final UnitOwnerExternalAPI unitOwnerExternalAPI;
