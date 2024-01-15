@@ -36,9 +36,9 @@ class UnitEndpoint {
         return unitExternalAPI.addUnit(unitDTO);
     }
 
-    @PutMapping("/{unitId}")
-    UnitDTO updateTenant(@RequestBody UnitDTO unitDTO) {
-        return unitExternalAPI.updateUnit(unitDTO);
+    @PatchMapping("/{unitId}")
+    UnitDTO updateTenant(@PathVariable UUID unitId, @RequestBody UnitDTO unitDTO) {
+        return unitExternalAPI.patchTenant(unitId, unitDTO);
     }
 
     @DeleteMapping("/{unitId}")
