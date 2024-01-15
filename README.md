@@ -3,6 +3,7 @@
 # rentlink_api
 
 SWAGGER UI: http://localhost:8080/swagger-ui/index.html#/
+MAIL SLURPPER: http://localost:4436
 
 To run project: 
 ```zsh

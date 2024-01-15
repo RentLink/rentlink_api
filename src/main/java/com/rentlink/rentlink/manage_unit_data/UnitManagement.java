@@ -41,8 +41,10 @@ class UnitManagement implements UnitExternalAPI {
     }
 
     @Override
-    public UnitDTO updateUnit(UnitDTO unitDTO) {
-        return unitMapper.map(unitRepository.save(unitMapper.map(unitDTO)));
+    public UnitDTO patchTenant(UUID id, UnitDTO unitDTO) {
+        Unit unit = unitRepository.findById(id).orElseThrow(UnitNotFoundException::new);
+        unitMapper.update(unitDTO, unit);
+        return unitMapper.map(unitRepository.save(unit));
     }
 
     @Override

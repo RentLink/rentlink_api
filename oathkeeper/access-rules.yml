@@ -1,0 +1,43 @@
+- id: "api:protected"
+  upstream:
+    preserve_host: true
+    url: "http://rentlink:8080"
+  match:
+    url: "http://localhost:8080/<**>"
+    methods:
+      - GET
+      - PUT
+      - DELETE
+      - POST
+      - PATCH
+  authenticators:
+    - handler: cookie_session
+  mutators:
+    - handler: header
+  authorizer:
+    handler: allow
+  errors:
+    - handler: json
+      config:
+        verbose: true
+- id: "api:protected2"
+  upstream:
+    preserve_host: true
+    url: "http://rentlink:8080"
+  match:
+    url: "http://127.0.0.1:8080/<**>"
+    methods:
+      - GET
+      - PUT
+      - DELETE
+      - POST
+  authenticators:
+    - handler: cookie_session
+  mutators:
+    - handler: header
+  authorizer:
+    handler: allow
+  errors:
+    - handler: json
+      config:
+        verbose: true

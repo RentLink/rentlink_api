@@ -10,7 +10,7 @@ interface UnitExternalAPI {
 
     UnitDTO addUnit(UnitDTO unitDTO);
 
-    UnitDTO updateUnit(UnitDTO unitDTO);
+    UnitDTO patchTenant(UUID unitId, UnitDTO unitDTO);
 
     void deleteUnit(UUID unitId);
 }
