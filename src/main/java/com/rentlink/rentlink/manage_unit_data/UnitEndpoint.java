@@ -13,36 +13,36 @@ class UnitEndpoint {
     private final UnitExternalAPI unitExternalAPI;
 
     @GetMapping("/{unitId}")
-    public UnitDTO getTenant(@PathVariable UUID unitId) {
+    public UnitDTO getUnit(@PathVariable UUID unitId) {
         return unitExternalAPI.getUnit(unitId);
     }
 
     @GetMapping("/")
-    Set<UnitDTO> getTenants() {
+    Set<UnitDTO> getUnits() {
         return unitExternalAPI.getUnits(null, null);
     }
 
     @GetMapping(
             value = "",
             params = {"page", "size"})
-    Set<UnitDTO> getTenants(
+    Set<UnitDTO> getUnits(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size) {
         return unitExternalAPI.getUnits(page - 1, size);
     }
 
     @PostMapping("/")
-    UnitDTO addTenant(@RequestBody UnitDTO unitDTO) {
+    UnitDTO addUnit(@RequestBody UnitDTO unitDTO) {
         return unitExternalAPI.addUnit(unitDTO);
     }
 
     @PatchMapping("/{unitId}")
-    UnitDTO updateTenant(@PathVariable UUID unitId, @RequestBody UnitDTO unitDTO) {
-        return unitExternalAPI.patchTenant(unitId, unitDTO);
+    UnitDTO updateUnit(@PathVariable UUID unitId, @RequestBody UnitDTO unitDTO) {
+        return unitExternalAPI.updateUnit(unitId, unitDTO);
     }
 
     @DeleteMapping("/{unitId}")
-    void deleteTenant(@PathVariable UUID unitId) {
+    void deleteUnit(@PathVariable UUID unitId) {
         unitExternalAPI.deleteUnit(unitId);
     }
 }

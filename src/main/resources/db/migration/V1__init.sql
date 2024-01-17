@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS unit
     unit_type varchar(20),
     rental_type varchar(20),
     heating_type varchar(20),
+    rental_option_type varchar(20),
     surface numeric,
     rooms_no numeric,
     city varchar(50),
@@ -96,3 +97,10 @@ CREATE TABLE IF NOT EXISTS unit
     cooperative_fee numeric(10,2),
     rental_fee numeric(10,2)
 );
+
+CREATE TABLE IF NOT EXISTS rental_option
+(
+    id UUID PRIMARY KEY,
+    unit_id UUID,
+    name varchar(255)
+)
