@@ -64,6 +64,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation "com.diffplug.spotless:spotless-lib:$spotlessLibVersion"
 	implementation "com.diffplug.spotless:spotless-plugin-gradle:$spotlessVersion"
+	annotationProcessor 'io.soabase.record-builder:record-builder-processor:40'
+	compileOnly 'io.soabase.record-builder:record-builder-core:40'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'

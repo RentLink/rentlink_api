@@ -7,7 +7,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "unit_owner", schema = "rentlink")

@@ -13,7 +13,9 @@ public enum ExceptionCode {
     TENANT_UNEXPECTED_ERROR("TENANT_UNEXPECTED_ERROR", "Unexpected error"),
 
     UNIT_NOT_FOUND("UNIT_NOT_FOUND", "Unit not found"),
-    UNIT_UNEXPECTED_ERROR("UNIT_UNEXPECTED_ERROR", "Unexpected error");
+    UNIT_UNEXPECTED_ERROR("UNIT_UNEXPECTED_ERROR", "Unexpected error"),
+
+    RENTAL_OPTION_NOT_FOUND("RENTAL_OPTION_NOT_FOUND", "Rental option not found");
 
     private final String code;
     private final String description;

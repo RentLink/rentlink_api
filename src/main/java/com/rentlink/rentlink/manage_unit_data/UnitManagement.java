@@ -1,5 +1,7 @@
 package com.rentlink.rentlink.manage_unit_data;
 
+import com.rentlink.rentlink.manage_rental_options.RentalOptionDTO;
+import com.rentlink.rentlink.manage_rental_options.RentalOptionInternalAPI;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -9,17 +11,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 class UnitManagement implements UnitExternalAPI {
 
     private final UnitRepository unitRepository;
+    private final RentalOptionInternalAPI rentalOptionInternalAPI;
     private final UnitMapper unitMapper;
 
     @Override
     public UnitDTO getUnit(UUID unitId) {
-        return unitMapper.map(unitRepository.findById(unitId).orElseThrow(UnitNotFoundException::new));
+        UnitDTO unit = unitRepository.findById(unitId).map(unitMapper::map).orElseThrow(UnitNotFoundException::new);
+        Set<RentalOptionDTO> rentalOptions = rentalOptionInternalAPI.getRentalOptionsByUnitId(unitId);
+        return unit.withRentalOptions(rentalOptions);
     }
 
     @Override
@@ -32,19 +38,37 @@ class UnitManagement implements UnitExternalAPI {
             stream = unitRepository.findAll().stream();
         }
 
-        return stream.map(unitMapper::map).collect(Collectors.toSet());
+        return stream.map(unitMapper::map)
+                .map(unitDTO -> {
+                    Set<RentalOptionDTO> rentalOptions = rentalOptionInternalAPI.getRentalOptionsByUnitId(unitDTO.id());
+                    return unitDTO.withRentalOptions(rentalOptions);
+                })
+                .collect(Collectors.toSet());
     }
 
     @Override
+    @Transactional
     public UnitDTO addUnit(UnitDTO unitDTO) {
-        return unitMapper.map(unitRepository.save(unitMapper.map(unitDTO)));
+        UnitDTO result = unitMapper.map(unitRepository.save(unitMapper.map(unitDTO)));
+        Set<RentalOptionDTO> rentalOptionResult = unitDTO.rentalOptions().stream()
+                .map(rentalOptionDTO -> rentalOptionDTO.withUnitId(result.id()))
+                .map(rentalOptionInternalAPI::create)
+                .collect(Collectors.toSet());
+        return result.withRentalOptions(rentalOptionResult);
     }
 
     @Override
-    public UnitDTO patchTenant(UUID id, UnitDTO unitDTO) {
+    public UnitDTO updateUnit(UUID id, UnitDTO unitDTO) {
         Unit unit = unitRepository.findById(id).orElseThrow(UnitNotFoundException::new);
         unitMapper.update(unitDTO, unit);
-        return unitMapper.map(unitRepository.save(unit));
+        UnitDTO result = unitMapper.map(unitRepository.save(unit));
+        if (unitDTO.rentalOptions() != null && !unitDTO.rentalOptions().isEmpty()) {
+            Set<RentalOptionDTO> rentalOptionResult = unitDTO.rentalOptions().stream()
+                    .map(rentalOptionInternalAPI::update)
+                    .collect(Collectors.toSet());
+            return result.withRentalOptions(rentalOptionResult);
+        }
+        return result;
     }
 
     @Override

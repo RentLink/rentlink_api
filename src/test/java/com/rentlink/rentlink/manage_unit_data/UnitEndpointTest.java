@@ -111,7 +111,7 @@ class UnitEndpointTest extends AbstractIntegrationTest implements DataGenerator<
 
         UnitDTO patch = new UnitDTO(
                 null, "TEST", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                null, null);
+                null, null, null, null);
 
         UnitDTO patchResponse = restTemplate.patchForObject("/api/unit/" + postResponse.id(), patch, UnitDTO.class);
         UnitDTO getResponseAfterPatch = restTemplate.getForObject("/api/unit/" + patchResponse.id(), UnitDTO.class);

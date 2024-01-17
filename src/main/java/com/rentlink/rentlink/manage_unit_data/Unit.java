@@ -31,6 +31,10 @@ class Unit {
     @Enumerated(EnumType.STRING)
     private HeatingType heatingType;
 
+    @Column(name = "rental_option_type")
+    @Enumerated(EnumType.STRING)
+    private RentalOptionType rentalOptionType;
+
     private Integer surface;
 
     @Column(name = "rooms_no")
