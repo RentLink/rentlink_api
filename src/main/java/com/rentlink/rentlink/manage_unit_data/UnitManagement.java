@@ -2,6 +2,8 @@ package com.rentlink.rentlink.manage_unit_data;
 
 import com.rentlink.rentlink.manage_rental_options.RentalOptionDTO;
 import com.rentlink.rentlink.manage_rental_options.RentalOptionInternalAPI;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -50,10 +52,11 @@ class UnitManagement implements UnitExternalAPI {
     @Transactional
     public UnitDTO addUnit(UnitDTO unitDTO) {
         UnitDTO result = unitMapper.map(unitRepository.save(unitMapper.map(unitDTO)));
-        Set<RentalOptionDTO> rentalOptionResult = unitDTO.rentalOptions().stream()
-                .map(rentalOptionDTO -> rentalOptionDTO.withUnitId(result.id()))
-                .map(rentalOptionInternalAPI::create)
-                .collect(Collectors.toSet());
+        Set<RentalOptionDTO> rentalOptionResult =
+                Optional.ofNullable(unitDTO.rentalOptions()).orElse(Collections.emptySet()).stream()
+                        .map(rentalOptionDTO -> rentalOptionDTO.withUnitId(result.id()))
+                        .map(rentalOptionInternalAPI::create)
+                        .collect(Collectors.toSet());
         return result.withRentalOptions(rentalOptionResult);
     }
 
