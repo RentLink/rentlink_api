@@ -54,8 +54,7 @@ class UnitManagement implements UnitExternalAPI {
         UnitDTO result = unitMapper.map(unitRepository.save(unitMapper.map(unitDTO)));
         Set<RentalOptionDTO> rentalOptionResult =
                 Optional.ofNullable(unitDTO.rentalOptions()).orElse(Collections.emptySet()).stream()
-                        .map(rentalOptionDTO -> rentalOptionDTO.withUnitId(result.id()))
-                        .map(rentalOptionInternalAPI::create)
+                        .map(rentalOptionDTO -> rentalOptionInternalAPI.create(rentalOptionDTO, result.id()))
                         .collect(Collectors.toSet());
         return result.withRentalOptions(rentalOptionResult);
     }
@@ -67,7 +66,7 @@ class UnitManagement implements UnitExternalAPI {
         UnitDTO result = unitMapper.map(unitRepository.save(unit));
         if (unitDTO.rentalOptions() != null && !unitDTO.rentalOptions().isEmpty()) {
             Set<RentalOptionDTO> rentalOptionResult = unitDTO.rentalOptions().stream()
-                    .map(rentalOptionInternalAPI::update)
+                    .map(rentalOptionDTO -> rentalOptionInternalAPI.update(rentalOptionDTO, result.id()))
                     .collect(Collectors.toSet());
             return result.withRentalOptions(rentalOptionResult);
         }

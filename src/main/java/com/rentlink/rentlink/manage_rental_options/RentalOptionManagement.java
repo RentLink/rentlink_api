@@ -22,15 +22,17 @@ public class RentalOptionManagement implements RentalOptionInternalAPI {
     }
 
     @Override
-    public RentalOptionDTO create(RentalOptionDTO rentalOptionDTO) {
+    public RentalOptionDTO create(RentalOptionDTO rentalOptionDTO, UUID unitId) {
         RentalOption rentalOption = rentalOptionRepository.save(rentalOptionMapper.map(rentalOptionDTO));
+        rentalOption.setUnitId(unitId);
         return rentalOptionMapper.map(rentalOption);
     }
 
     @Override
-    public RentalOptionDTO update(RentalOptionDTO rentalOptionDTO) {
+    public RentalOptionDTO update(RentalOptionDTO rentalOptionDTO, UUID unitId) {
         RentalOption rentalOption =
                 rentalOptionRepository.findById(rentalOptionDTO.id()).orElseThrow(RentalOptionFoundException::new);
+        rentalOption.setUnitId(unitId);
         rentalOptionMapper.update(rentalOptionDTO, rentalOption);
         return rentalOptionMapper.map(rentalOptionRepository.save(rentalOption));
     }
