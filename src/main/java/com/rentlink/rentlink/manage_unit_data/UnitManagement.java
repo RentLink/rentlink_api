@@ -54,7 +54,7 @@ class UnitManagement implements UnitExternalAPI {
         UnitDTO result = unitMapper.map(unitRepository.save(unitMapper.map(unitDTO)));
         Set<RentalOptionDTO> rentalOptionResult =
                 Optional.ofNullable(unitDTO.rentalOptions()).orElse(Collections.emptySet()).stream()
-                        .map(rentalOptionDTO -> rentalOptionInternalAPI.create(rentalOptionDTO, result.id()))
+                        .map(rentalOptionDTO -> rentalOptionInternalAPI.upsert(rentalOptionDTO, result.id()))
                         .collect(Collectors.toSet());
         return result.withRentalOptions(rentalOptionResult);
     }
@@ -64,11 +64,15 @@ class UnitManagement implements UnitExternalAPI {
         Unit unit = unitRepository.findById(id).orElseThrow(UnitNotFoundException::new);
         unitMapper.update(unitDTO, unit);
         UnitDTO result = unitMapper.map(unitRepository.save(unit));
-        if (unitDTO.rentalOptions() != null && !unitDTO.rentalOptions().isEmpty()) {
-            Set<RentalOptionDTO> rentalOptionResult = unitDTO.rentalOptions().stream()
-                    .map(rentalOptionDTO -> rentalOptionInternalAPI.update(rentalOptionDTO, result.id()))
-                    .collect(Collectors.toSet());
-            return result.withRentalOptions(rentalOptionResult);
+        if (unitDTO.rentalOptions() != null) {
+            unitDTO.rentalOptions().forEach(rentalOptionDTO -> {
+                if (rentalOptionDTO.id() != null) {
+                    rentalOptionInternalAPI.upsert(rentalOptionDTO, result.id());
+                } else {
+                    rentalOptionInternalAPI.upsert(rentalOptionDTO, result.id());
+                }
+            });
+            return result.withRentalOptions(rentalOptionInternalAPI.getRentalOptionsByUnitId(result.id()));
         }
         return result;
     }

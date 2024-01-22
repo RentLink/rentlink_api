@@ -9,7 +9,16 @@ To run project:
 ```zsh
 docker-compose up -d
 ```
-After fetching new version: 
+Scripts:
+To restart everything and clean databases:
 ```zsh
-docker-compose up -d --build rentlink
+./restart-all.sh
+```
+To restart everything, rebuild API and clean databases:
+```zsh
+./rebuild-all.sh
+```
+To ONLY rebuild API and without cleaning databases:
+```zsh
+./rebuild-api.sh
 ```
