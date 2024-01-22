@@ -7,7 +7,5 @@ public interface RentalOptionInternalAPI {
 
     Set<RentalOptionDTO> getRentalOptionsByUnitId(UUID unitId);
 
-    RentalOptionDTO create(RentalOptionDTO rentalOptionDTO, UUID unitId);
-
-    RentalOptionDTO update(RentalOptionDTO rentalOptionDTO, UUID unitId);
+    RentalOptionDTO upsert(RentalOptionDTO rentalOptionDTO, UUID unitId);
 }

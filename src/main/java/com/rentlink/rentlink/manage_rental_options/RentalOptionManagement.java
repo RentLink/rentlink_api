@@ -22,18 +22,18 @@ public class RentalOptionManagement implements RentalOptionInternalAPI {
     }
 
     @Override
-    public RentalOptionDTO create(RentalOptionDTO rentalOptionDTO, UUID unitId) {
-        RentalOption rentalOption = rentalOptionRepository.save(rentalOptionMapper.map(rentalOptionDTO));
-        rentalOption.setUnitId(unitId);
-        return rentalOptionMapper.map(rentalOption);
-    }
-
-    @Override
-    public RentalOptionDTO update(RentalOptionDTO rentalOptionDTO, UUID unitId) {
-        RentalOption rentalOption =
-                rentalOptionRepository.findById(rentalOptionDTO.id()).orElseThrow(RentalOptionFoundException::new);
-        rentalOption.setUnitId(unitId);
-        rentalOptionMapper.update(rentalOptionDTO, rentalOption);
-        return rentalOptionMapper.map(rentalOptionRepository.save(rentalOption));
+    public RentalOptionDTO upsert(RentalOptionDTO rentalOptionDTO, UUID unitId) {
+        if (rentalOptionDTO.id() != null) {
+            RentalOption rentalOption =
+                    rentalOptionRepository.findById(rentalOptionDTO.id()).orElseThrow(RentalOptionFoundException::new);
+            rentalOptionMapper.update(rentalOptionDTO, rentalOption);
+            rentalOption.setUnitId(unitId);
+            return rentalOptionMapper.map(rentalOptionRepository.save(rentalOption));
+        } else {
+            RentalOption rentalOption = rentalOptionMapper.map(rentalOptionDTO);
+            rentalOption.setUnitId(unitId);
+            RentalOption saved = rentalOptionRepository.save(rentalOption);
+            return rentalOptionMapper.map(saved);
+        }
     }
 }
