@@ -1,5 +1,6 @@
 package com.rentlink.rentlink.manage_rental_options;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,5 +36,10 @@ public class RentalOptionManagement implements RentalOptionInternalAPI {
             RentalOption saved = rentalOptionRepository.save(rentalOption);
             return rentalOptionMapper.map(saved);
         }
+    }
+
+    @Override
+    public Optional<RentalOptionDTO> getRentalOptionsById(UUID id) {
+        return rentalOptionRepository.findById(id).map(rentalOptionMapper::map);
     }
 }

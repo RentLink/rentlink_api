@@ -22,3 +22,9 @@ To ONLY rebuild API and without cleaning databases:
 ```zsh
 ./rebuild-api.sh
 ```
+
+Local files dir: /opt/rentlink/images/
+Clean local files:
+```zsh
+rm -rf /opt/rentlink/images
+```

@@ -1,6 +1,9 @@
 package com.rentlink.rentlink.manage_unit_data;
 
+import com.rentlink.rentlink.manage_fines.FileToSave;
+import com.rentlink.rentlink.manage_fines.FilesManagerInternalAPI;
 import com.rentlink.rentlink.manage_rental_options.RentalOptionDTO;
+import com.rentlink.rentlink.manage_rental_options.RentalOptionFoundException;
 import com.rentlink.rentlink.manage_rental_options.RentalOptionInternalAPI;
 import java.util.Collections;
 import java.util.Optional;
@@ -14,14 +17,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 class UnitManagement implements UnitExternalAPI {
 
+    private static final String unitsSubdir = "/units";
+
     private final UnitRepository unitRepository;
     private final RentalOptionInternalAPI rentalOptionInternalAPI;
     private final UnitMapper unitMapper;
+    private final FilesManagerInternalAPI filesManagerInternalAPI;
 
     @Override
     public UnitDTO getUnit(UUID unitId) {
@@ -65,14 +72,8 @@ class UnitManagement implements UnitExternalAPI {
         unitMapper.update(unitDTO, unit);
         UnitDTO result = unitMapper.map(unitRepository.save(unit));
         if (unitDTO.rentalOptions() != null) {
-            unitDTO.rentalOptions().forEach(rentalOptionDTO -> {
-                if (rentalOptionDTO.id() != null) {
-                    rentalOptionInternalAPI.upsert(rentalOptionDTO, result.id());
-                } else {
-                    rentalOptionInternalAPI.upsert(rentalOptionDTO, result.id());
-                }
-            });
-            return result.withRentalOptions(rentalOptionInternalAPI.getRentalOptionsByUnitId(result.id()));
+            unitDTO.rentalOptions().forEach(rentalOptionDTO -> rentalOptionInternalAPI.upsert(rentalOptionDTO, id));
+            return result.withRentalOptions(rentalOptionInternalAPI.getRentalOptionsByUnitId(id));
         }
         return result;
     }
@@ -80,5 +81,31 @@ class UnitManagement implements UnitExternalAPI {
     @Override
     public void deleteUnit(UUID unitId) {
         unitRepository.deleteById(unitId);
+    }
+
+    @Override
+    public void uploadImages(UUID unitId, UUID rentalOptionId, Set<MultipartFile> multipartFiles) {
+        if (rentalOptionId == null) {
+            uploadUnitImages(unitId, multipartFiles);
+        } else {
+            uploadRentalOptionsImages(unitId, rentalOptionId, multipartFiles);
+        }
+    }
+
+    private void uploadUnitImages(UUID unitId, Set<MultipartFile> multipartFiles) {
+        unitRepository.findById(unitId).orElseThrow(UnitNotFoundException::new);
+        var unitSubdir = "%s/%s".formatted(unitsSubdir, unitId);
+        filesManagerInternalAPI.saveFiles(multipartFiles.stream()
+                .map(mp -> new FileToSave(unitSubdir, mp))
+                .collect(Collectors.toSet()));
+    }
+
+    private void uploadRentalOptionsImages(UUID unitId, UUID rentalOptionId, Set<MultipartFile> multipartFiles) {
+        unitRepository.findById(unitId).orElseThrow(UnitNotFoundException::new);
+        rentalOptionInternalAPI.getRentalOptionsById(rentalOptionId).orElseThrow(RentalOptionFoundException::new);
+        var unitSubdir = "%s/%s/rentalOptions/%s".formatted(unitsSubdir, unitId, rentalOptionId);
+        filesManagerInternalAPI.saveFiles(multipartFiles.stream()
+                .map(mp -> new FileToSave(unitSubdir, mp))
+                .collect(Collectors.toSet()));
     }
 }
