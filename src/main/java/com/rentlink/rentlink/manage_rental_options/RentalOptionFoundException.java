@@ -6,6 +6,6 @@ import com.rentlink.rentlink.common.enums.ExceptionCode;
 public class RentalOptionFoundException extends GenericCodeException {
 
     public RentalOptionFoundException() {
-        super(ExceptionCode.UNIT_NOT_FOUND);
+        super(ExceptionCode.RENTAL_OPTION_NOT_FOUND);
     }
 }

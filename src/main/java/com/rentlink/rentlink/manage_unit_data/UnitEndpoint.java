@@ -3,7 +3,11 @@ package com.rentlink.rentlink.manage_unit_data;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/unit")
@@ -39,6 +43,30 @@ class UnitEndpoint {
     @PatchMapping("/{unitId}")
     UnitDTO updateUnit(@PathVariable UUID unitId, @RequestBody UnitDTO unitDTO) {
         return unitExternalAPI.updateUnit(unitId, unitDTO);
+    }
+
+    @PutMapping(
+            value = "/{unitId}/upload-images",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> uploadFile(
+            @PathVariable UUID unitId,
+            @RequestPart(value = "files") MultipartFile[] files,
+            @RequestPart(value = "rentalOptionId", required = false) UUID rentalOptionId) {
+        unitExternalAPI.uploadImages(unitId, rentalOptionId, Set.of(files));
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    @PutMapping(
+            value = "/{unitId}/rental-option/{rentalOptionId}/upload-images",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> uploadFile(
+            @PathVariable UUID unitId,
+            @PathVariable UUID rentalOptionId,
+            @RequestPart(value = "files") MultipartFile[] files) {
+        unitExternalAPI.uploadImages(unitId, rentalOptionId, Set.of(files));
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     @DeleteMapping("/{unitId}")

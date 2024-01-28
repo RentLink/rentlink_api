@@ -2,6 +2,7 @@ package com.rentlink.rentlink.manage_unit_data;
 
 import com.rentlink.rentlink.common.ErrorMessage;
 import com.rentlink.rentlink.common.enums.ExceptionCode;
+import com.rentlink.rentlink.manage_rental_options.RentalOptionFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,12 @@ class UnitExceptionHandler {
 
     @ExceptionHandler(UnitNotFoundException.class)
     public ResponseEntity<ErrorMessage> handleNotFound(UnitNotFoundException ex) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(404))
+                .body(ErrorMessage.fromExceptionCode(ex.getExceptionCode()));
+    }
+
+    @ExceptionHandler(RentalOptionFoundException.class)
+    public ResponseEntity<ErrorMessage> handleNotFound(RentalOptionFoundException ex) {
         return ResponseEntity.status(HttpStatusCode.valueOf(404))
                 .body(ErrorMessage.fromExceptionCode(ex.getExceptionCode()));
     }
