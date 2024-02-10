@@ -5,11 +5,10 @@ import com.rentlink.rentlink.manage_fines.FilesManagerInternalAPI;
 import com.rentlink.rentlink.manage_rental_options.RentalOptionDTO;
 import com.rentlink.rentlink.manage_rental_options.RentalOptionFoundException;
 import com.rentlink.rentlink.manage_rental_options.RentalOptionInternalAPI;
-import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +30,7 @@ class UnitManagement implements UnitExternalAPI {
     private final FilesManagerInternalAPI filesManagerInternalAPI;
 
     @Override
+    @Transactional(readOnly = true)
     public UnitDTO getUnit(UUID unitId) {
         UnitDTO unit = unitRepository.findById(unitId).map(unitMapper::map).orElseThrow(UnitNotFoundException::new);
         Set<RentalOptionDTO> rentalOptions = rentalOptionInternalAPI.getRentalOptionsByUnitId(unitId);
@@ -38,6 +38,7 @@ class UnitManagement implements UnitExternalAPI {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Set<UnitDTO> getUnits(Integer page, Integer pageSize) {
         Stream<Unit> stream;
         if (page != null && pageSize != null) {
@@ -59,26 +60,33 @@ class UnitManagement implements UnitExternalAPI {
     @Transactional
     public UnitDTO addUnit(UnitDTO unitDTO) {
         UnitDTO result = unitMapper.map(unitRepository.save(unitMapper.map(unitDTO)));
-        Set<RentalOptionDTO> rentalOptionResult =
-                Optional.ofNullable(unitDTO.rentalOptions()).orElse(Collections.emptySet()).stream()
-                        .map(rentalOptionDTO -> rentalOptionInternalAPI.upsert(rentalOptionDTO, result.id()))
-                        .collect(Collectors.toSet());
-        return result.withRentalOptions(rentalOptionResult);
+        if (result.rentalType().equals(RentalType.WHOLE)) {
+            Set<RentalOptionDTO> rentalOptionResult =
+                    Set.of(rentalOptionInternalAPI.upsert(new RentalOptionDTO(null, "Całe miejsce"), result.id()));
+            return result.withRentalOptions(rentalOptionResult);
+        } else {
+            Set<RentalOptionDTO> rentalOptionResult = IntStream.range(1, result.roomsNo() + 1)
+                    .mapToObj(no -> rentalOptionInternalAPI.upsert(
+                            new RentalOptionDTO(null, "Pokój nr %s".formatted(no)), result.id()))
+                    .collect(Collectors.toSet());
+            return result.withRentalOptions(rentalOptionResult);
+        }
     }
 
     @Override
+    @Transactional
     public UnitDTO updateUnit(UUID id, UnitDTO unitDTO) {
         Unit unit = unitRepository.findById(id).orElseThrow(UnitNotFoundException::new);
         unitMapper.update(unitDTO, unit);
         UnitDTO result = unitMapper.map(unitRepository.save(unit));
         if (unitDTO.rentalOptions() != null) {
             unitDTO.rentalOptions().forEach(rentalOptionDTO -> rentalOptionInternalAPI.upsert(rentalOptionDTO, id));
-            return result.withRentalOptions(rentalOptionInternalAPI.getRentalOptionsByUnitId(id));
         }
-        return result;
+        return result.withRentalOptions(rentalOptionInternalAPI.getRentalOptionsByUnitId(id));
     }
 
     @Override
+    @Transactional
     public void deleteUnit(UUID unitId) {
         unitRepository.deleteById(unitId);
     }
