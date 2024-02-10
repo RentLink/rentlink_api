@@ -72,6 +72,27 @@ class UnitOwner {
     @Column(name = "company_name")
     private String companyName;
 
+    @Column(name = "company_city")
+    private String companyCity;
+
+    @Column(name = "company_postal_code")
+    private String companyPostalCode;
+
+    @Column(name = "company_street")
+    private String companyStreet;
+
+    @Column(name = "company_building_no")
+    private String companyBuildingNumber;
+
+    @Column(name = "company_apartment_no")
+    private String companyApartmentNumber;
+
+    @Column(name = "company_country")
+    private String companyCountry;
+
+    @Column(name = "social_number")
+    private String socialNumber;
+
     private String nip;
 
     private String regon;
