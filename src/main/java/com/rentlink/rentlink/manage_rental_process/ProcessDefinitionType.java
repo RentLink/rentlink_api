@@ -1,6 +1,6 @@
 package com.rentlink.rentlink.manage_rental_process;
 
-public enum ProcessDefinitionType {
+enum ProcessDefinitionType {
     SYSTEM,
     UDF
 }

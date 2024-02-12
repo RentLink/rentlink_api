@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/process-definitions")
 @RequiredArgsConstructor
-public class ProcessDefinitionEndpoint {
+class ProcessDefinitionEndpoint {
 
     private final ProcessDefinitionManagement processDefinitionManagement;
 
     @GetMapping("/")
-    List<ProcessDefinition> getDefinitions() {
+    List<ProcessDefinitionDTO> getDefinitions() {
         return processDefinitionManagement.getDefinitions();
     }
 }

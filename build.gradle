@@ -66,6 +66,8 @@ dependencies {
 	implementation "com.diffplug.spotless:spotless-plugin-gradle:$spotlessVersion"
 	annotationProcessor 'io.soabase.record-builder:record-builder-processor:40'
 	compileOnly 'io.soabase.record-builder:record-builder-core:40'
+	implementation 'io.vavr:vavr:0.10.4'
+	implementation 'io.hypersistence:hypersistence-utils-hibernate-62:3.7.2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'

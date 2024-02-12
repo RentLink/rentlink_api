@@ -1,7 +1,7 @@
 package com.rentlink.rentlink.manage_unit_data;
 
-import com.rentlink.rentlink.manage_fines.FileToSave;
-import com.rentlink.rentlink.manage_fines.FilesManagerInternalAPI;
+import com.rentlink.rentlink.manage_files.FileToSave;
+import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
 import com.rentlink.rentlink.manage_rental_options.RentalOptionDTO;
 import com.rentlink.rentlink.manage_rental_options.RentalOptionFoundException;
 import com.rentlink.rentlink.manage_rental_options.RentalOptionInternalAPI;
@@ -103,7 +103,7 @@ class UnitManagement implements UnitExternalAPI {
     private void uploadUnitImages(UUID unitId, Set<MultipartFile> multipartFiles) {
         unitRepository.findById(unitId).orElseThrow(UnitNotFoundException::new);
         var unitSubdir = "%s/%s".formatted(unitsSubdir, unitId);
-        filesManagerInternalAPI.saveFiles(multipartFiles.stream()
+        filesManagerInternalAPI.saveImages(multipartFiles.stream()
                 .map(mp -> new FileToSave(unitSubdir, mp))
                 .collect(Collectors.toSet()));
     }
@@ -112,7 +112,7 @@ class UnitManagement implements UnitExternalAPI {
         unitRepository.findById(unitId).orElseThrow(UnitNotFoundException::new);
         rentalOptionInternalAPI.getRentalOptionsById(rentalOptionId).orElseThrow(RentalOptionFoundException::new);
         var unitSubdir = "%s/%s/rentalOptions/%s".formatted(unitsSubdir, unitId, rentalOptionId);
-        filesManagerInternalAPI.saveFiles(multipartFiles.stream()
+        filesManagerInternalAPI.saveImages(multipartFiles.stream()
                 .map(mp -> new FileToSave(unitSubdir, mp))
                 .collect(Collectors.toSet()));
     }
