@@ -21,6 +21,8 @@ spring:
       max-request-size: 10MB
 
 rentlink:
-  file:
+  images:
     dir: "/opt/rentlink/images/"
+  files:
+    dir: "/opt/rentlink/files/"
 

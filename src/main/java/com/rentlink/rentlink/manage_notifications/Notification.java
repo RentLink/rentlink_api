@@ -1,7 +1,8 @@
-package com.rentlink.rentlink.manage_rental_options;
+package com.rentlink.rentlink.manage_notifications;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,18 +12,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "rental_option", schema = "rentlink")
+@Table(name = "notification", schema = "rentlink")
 @Getter
 @Setter
-public class RentalOption {
+public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "unit_id")
-    private UUID unitId;
+    private String title;
 
-    @Column(name = "name")
-    private String name;
+    private String description;
+
+    private Boolean received;
+
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
 }

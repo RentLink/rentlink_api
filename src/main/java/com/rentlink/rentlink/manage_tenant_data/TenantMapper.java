@@ -1,7 +1,13 @@
 package com.rentlink.rentlink.manage_tenant_data;
 
 import java.util.Set;
-import org.mapstruct.*;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.InheritConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,

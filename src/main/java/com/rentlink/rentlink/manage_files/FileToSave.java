@@ -1,4 +1,4 @@
-package com.rentlink.rentlink.manage_fines;
+package com.rentlink.rentlink.manage_files;
 
 import org.springframework.web.multipart.MultipartFile;
 

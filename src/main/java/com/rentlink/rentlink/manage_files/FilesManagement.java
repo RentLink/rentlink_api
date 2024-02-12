@@ -1,4 +1,4 @@
-package com.rentlink.rentlink.manage_fines;
+package com.rentlink.rentlink.manage_files;
 
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -15,20 +15,28 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class FilesManagement implements FilesManagerInternalAPI {
 
-    @Value("${rentlink.file.dir}")
-    private String rootDir;
+    @Value("${rentlink.images.dir}")
+    private String rootImagesDir;
+
+    @Value("${rentlink.files.dir}")
+    private String rootFilesDir;
+
+    @Override
+    public void saveImages(Set<FileToSave> files) {
+        files.stream().filter(Objects::nonNull).forEach(file -> saveFile(file, rootImagesDir));
+    }
 
     @Override
     public void saveFiles(Set<FileToSave> files) {
-        files.stream().filter(Objects::nonNull).forEach(this::saveFile);
+        files.stream().filter(Objects::nonNull).forEach(file -> saveFile(file, rootFilesDir));
     }
 
-    private void saveFile(FileToSave file) {
+    private void saveFile(FileToSave file, String dir) {
         try {
             if (file.file().isEmpty()) {
                 return;
             }
-            Path destination = Paths.get(rootDir + file.subdirectory())
+            Path destination = Paths.get(dir + file.subdirectory())
                     .resolve(file.file().getOriginalFilename())
                     .normalize()
                     .toAbsolutePath();

@@ -117,4 +117,24 @@ CREATE TABLE IF NOT EXISTS rental_option
     id UUID PRIMARY KEY,
     unit_id UUID,
     name varchar(255)
+);
+
+
+CREATE TABLE IF NOT EXISTS notification
+(
+    id UUID PRIMARY KEY,
+    title varchar(255),
+    description varchar(255),
+    priority varchar(20),
+    received bool
+);
+
+CREATE TABLE IF NOT EXISTS rental_process
+(
+    id UUID PRIMARY KEY,
+    rental_option_id UUID,
+    name VARCHAR(255),
+    definition_type VARCHAR(20),
+    steps JSONB,
+    current_step_id UUID
 )

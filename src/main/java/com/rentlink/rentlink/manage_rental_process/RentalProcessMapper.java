@@ -1,4 +1,4 @@
-package com.rentlink.rentlink.manage_unit_data;
+package com.rentlink.rentlink.manage_rental_process;
 
 import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
@@ -9,12 +9,12 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING)
-interface UnitMapper {
+interface RentalProcessMapper {
 
-    UnitDTO map(Unit unit);
+    RentalProcessDTO map(RentalProcess unit);
 
-    Unit map(UnitDTO unitDTO);
+    RentalProcess map(RentalProcessDTO unitDTO);
 
     @InheritConfiguration
-    void update(UnitDTO unitDTO, @MappingTarget Unit unit);
+    void update(RentalProcessDTO unitDTO, @MappingTarget RentalProcess unit);
 }
