@@ -14,11 +14,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Table(name = "tenant", schema = "rentlink")

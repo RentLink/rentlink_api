@@ -11,10 +11,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         componentModel = MappingConstants.ComponentModel.SPRING)
 interface RentalProcessMapper {
 
-    RentalProcessDTO map(RentalProcess unit);
+    RentalProcessDTO map(RentalProcess rentalProcess);
 
-    RentalProcess map(RentalProcessDTO unitDTO);
+    RentalProcess map(RentalProcessDTO rentalProcessDTO);
 
     @InheritConfiguration
-    void update(RentalProcessDTO unitDTO, @MappingTarget RentalProcess unit);
+    void update(RentalProcessDTO rentalProcessDTO, @MappingTarget RentalProcess rentalProcess);
 }

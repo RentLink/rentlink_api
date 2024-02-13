@@ -1,8 +1,9 @@
 package com.rentlink.rentlink.manage_unit_data;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Set;
 import java.util.UUID;
-import org.springframework.web.multipart.MultipartFile;
 
 interface UnitExternalAPI {
     UnitDTO getUnit(UUID unitId);

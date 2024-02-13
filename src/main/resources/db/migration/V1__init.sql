@@ -133,8 +133,6 @@ CREATE TABLE IF NOT EXISTS rental_process
 (
     id UUID PRIMARY KEY,
     rental_option_id UUID,
-    name VARCHAR(255),
-    definition_type VARCHAR(20),
-    steps JSONB,
+    definition JSONB,
     current_step_id UUID
 )
