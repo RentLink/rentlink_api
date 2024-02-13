@@ -1,37 +1,24 @@
 package com.rentlink.rentlink.manage_rental_process;
 
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import org.springframework.stereotype.Service;
 
 @Service
-class ProcessDefinitionManagement implements ProcessStepsExternalAPI {
+class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
     @Override
     public List<ProcessDefinitionDTO> getDefinitions() {
         return emptyDefinitions();
     }
 
-    private List<ProcessDefinitionDTO> filledDefinitions() {
-        return List.of(new ProcessDefinitionDTO(
-                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffeb1"),
-                "Domyślny proces",
-                ProcessDefinitionType.SYSTEM,
-                List.of(
-                        createInitialStep("Kamil", "123123123", null),
-                        createMeetStep(),
-                        createAwaitingDocsStep(),
-                        createVerificationStep(),
-                        endProcess()),
-                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab2")));
-    }
-
     private List<ProcessDefinitionDTO> emptyDefinitions() {
         return List.of(
                 new ProcessDefinitionDTO(
-                        null,
+                        UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabf"),
                         "Pełny proces",
                         ProcessDefinitionType.SYSTEM,
                         List.of(
@@ -39,14 +26,12 @@ class ProcessDefinitionManagement implements ProcessStepsExternalAPI {
                                 createMeetStep(),
                                 createAwaitingDocsStep(),
                                 createVerificationStep(),
-                                endProcess()),
-                        UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabf")),
+                                endProcess())),
                 new ProcessDefinitionDTO(
-                        null,
+                        UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabe"),
                         "Skrócony proces",
                         ProcessDefinitionType.SYSTEM,
-                        List.of(createInitialStep(null, null, null), createMeetStep(), endProcess()),
-                        UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabf")));
+                        List.of(createInitialStep(null, null, null), createMeetStep(), endProcess())));
     }
 
     private ProcessStepDTO createInitialStep(String name, String phone, String email) {
@@ -60,6 +45,7 @@ class ProcessDefinitionManagement implements ProcessStepsExternalAPI {
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabf"),
                 "Wstępny kontakt",
                 1,
+                ProcessStepType.STEP,
                 List.of(nameStep, phoneStep, emailStep));
     }
 
@@ -67,7 +53,11 @@ class ProcessDefinitionManagement implements ProcessStepsExternalAPI {
         ProcessDataInputDTO<LocalDate> name =
                 ProcessDataInputDTO.createDateProcessEntryValue("Data spotkania", false, 1, null);
         return new ProcessStepDTO(
-                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab2"), "Pokazanie mieszkania", 2, List.of(name));
+                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab2"),
+                "Pokazanie mieszkania",
+                2,
+                ProcessStepType.STEP,
+                List.of(name));
     }
 
     private ProcessStepDTO createAwaitingDocsStep() {
@@ -75,20 +65,41 @@ class ProcessDefinitionManagement implements ProcessStepsExternalAPI {
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab1"),
                 "Oczekiwanie na dokumenty",
                 3,
+                ProcessStepType.STEP,
                 Collections.emptyList());
     }
 
     private ProcessStepDTO createVerificationStep() {
-        ProcessDataInputDTO<String> verified = ProcessDataInputDTO.createEnumeratedProcessEntryValue(
-                "Wynik weryfikacji",
+        ProcessDataInputDTO<String> identityVerification = ProcessDataInputDTO.createEnumeratedProcessEntryValue(
+                "Weryfikacja tożsamości",
+                false,
+                1,
+                Set.of(
+                        new ProcessDataInputSelectValueDTO(VerificationOutcome.POSITIVE.name()),
+                        new ProcessDataInputSelectValueDTO(VerificationOutcome.NEGATIVE.name())),
+                null);
+        ProcessDataInputDTO<String> incomeVerification = ProcessDataInputDTO.createEnumeratedProcessEntryValue(
+                "Weryfikacja dochodu",
+                false,
+                2,
+                Set.of(
+                        new ProcessDataInputSelectValueDTO(VerificationOutcome.POSITIVE.name()),
+                        new ProcessDataInputSelectValueDTO(VerificationOutcome.NEGATIVE.name())),
+                null);
+        ProcessDataInputDTO<String> surveyVerification = ProcessDataInputDTO.createEnumeratedProcessEntryValue(
+                "Weryfikacja ankiety",
                 false,
                 3,
                 Set.of(
-                        new ProcessDataInputSelectValueDTO("POZYTYWNA"),
-                        new ProcessDataInputSelectValueDTO("NEGATYWNA")),
+                        new ProcessDataInputSelectValueDTO(VerificationOutcome.POSITIVE.name()),
+                        new ProcessDataInputSelectValueDTO(VerificationOutcome.NEGATIVE.name())),
                 null);
         return new ProcessStepDTO(
-                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab3"), "Weryfikacja", 4, List.of(verified));
+                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab3"),
+                "Weryfikacja najemcy",
+                4,
+                ProcessStepType.VALIDATION,
+                List.of(identityVerification, incomeVerification, surveyVerification));
     }
 
     private ProcessStepDTO endProcess() {
@@ -96,9 +107,15 @@ class ProcessDefinitionManagement implements ProcessStepsExternalAPI {
                 "Decyzja",
                 false,
                 3,
-                Set.of(new ProcessDataInputSelectValueDTO("UMOWA"), new ProcessDataInputSelectValueDTO("KONIEC")),
+                Set.of(
+                        new ProcessDataInputSelectValueDTO(ProcessDecision.CONTRACT.name()),
+                        new ProcessDataInputSelectValueDTO(ProcessDecision.REJECTION.name())),
                 null);
         return new ProcessStepDTO(
-                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab7"), "Zakończenie procesu", 5, List.of(verified));
+                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab7"),
+                "Zakończenie procesu",
+                5,
+                ProcessStepType.FINAL_STEP,
+                List.of(verified));
     }
 }

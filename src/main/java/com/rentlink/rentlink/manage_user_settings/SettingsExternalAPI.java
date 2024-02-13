@@ -1,7 +1,8 @@
 package com.rentlink.rentlink.manage_user_settings;
 
-import java.util.Set;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Set;
 
 public interface SettingsExternalAPI {
 

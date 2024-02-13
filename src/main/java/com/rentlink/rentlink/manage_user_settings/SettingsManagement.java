@@ -2,11 +2,12 @@ package com.rentlink.rentlink.manage_user_settings;
 
 import com.rentlink.rentlink.manage_files.FileToSave;
 import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

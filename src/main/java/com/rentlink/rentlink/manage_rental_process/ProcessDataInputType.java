@@ -1,9 +1,9 @@
 package com.rentlink.rentlink.manage_rental_process;
 
 enum ProcessDataInputType {
-    LITERAL,
+    INPUT,
+    TEXT_AREA,
     NUMERIC,
-    ENUMERATED,
-
+    SELECT,
     DATE
 }
