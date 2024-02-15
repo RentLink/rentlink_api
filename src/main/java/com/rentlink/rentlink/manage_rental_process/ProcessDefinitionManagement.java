@@ -1,12 +1,11 @@
 package com.rentlink.rentlink.manage_rental_process;
 
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.stereotype.Service;
 
 @Service
 class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
@@ -25,13 +24,12 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                                 createInitialStep(null, null, null),
                                 createMeetStep(),
                                 createAwaitingDocsStep(),
-                                createVerificationStep(),
-                                endProcess())),
+                                createVerificationStep())),
                 new ProcessDefinitionDTO(
                         UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabe"),
                         "Skrócony proces",
                         ProcessDefinitionType.SYSTEM,
-                        List.of(createInitialStep(null, null, null), createMeetStep(), endProcess())));
+                        List.of(createInitialStep(null, null, null), createMeetStep())));
     }
 
     private ProcessStepDTO createInitialStep(String name, String phone, String email) {
@@ -65,7 +63,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab1"),
                 "Oczekiwanie na dokumenty",
                 3,
-                ProcessStepType.STEP,
+                ProcessStepType.SEND_DOCS,
                 Collections.emptyList());
     }
 
@@ -100,22 +98,5 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                 4,
                 ProcessStepType.VALIDATION,
                 List.of(identityVerification, incomeVerification, surveyVerification));
-    }
-
-    private ProcessStepDTO endProcess() {
-        ProcessDataInputDTO<String> verified = ProcessDataInputDTO.createEnumeratedProcessEntryValue(
-                "Decyzja",
-                false,
-                3,
-                Set.of(
-                        new ProcessDataInputSelectValueDTO(ProcessDecision.CONTRACT.name()),
-                        new ProcessDataInputSelectValueDTO(ProcessDecision.REJECTION.name())),
-                null);
-        return new ProcessStepDTO(
-                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab7"),
-                "Zakończenie procesu",
-                5,
-                ProcessStepType.FINAL_STEP,
-                List.of(verified));
     }
 }

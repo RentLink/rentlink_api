@@ -1,10 +1,9 @@
 package com.rentlink.rentlink.manage_rental_process;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.time.LocalDate;
 import java.util.Set;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 record ProcessDataInputDTO<T>(
         String label,

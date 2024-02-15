@@ -10,4 +10,6 @@ interface RentalProcessExternalAPI {
     List<RentalProcessDTO> getRentalProcessesForOption(UUID rentalProcessId);
 
     RentalProcessDTO updateRentalProcess(UUID rentalProcessId, RentalProcessDTO rentalProcessDTO);
+
+    RentalProcessDTO rejectRentalProcess(UUID rentalProcessId);
 }

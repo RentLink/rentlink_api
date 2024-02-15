@@ -7,7 +7,9 @@ interface TenantExternalAPI {
 
     TenantDTO getTenant(UUID tenantId);
 
-    Set<TenantDTO> getTenants(Integer page, Integer pageSize);
+    Set<TenantDTO> getTenants();
+
+    Set<TenantDTO> searchTenants(Integer page, Integer pageSize, SearchTenant searchTenant);
 
     TenantDTO addTenant(TenantDTO tenantDTO);
 

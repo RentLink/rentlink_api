@@ -19,6 +19,17 @@ spring:
     multipart:
       max-file-size: 2MB
       max-request-size: 10MB
+#  mail:
+#    host: localhost
+#    port: 1025
+#    username: test
+#    password: test
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: false
 
 rentlink:
   images:

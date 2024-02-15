@@ -1,12 +1,13 @@
 package com.rentlink.rentlink.manage_notifications;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,11 +19,14 @@ class NotificationManagement implements NotificationExternalAPI, NotificationInt
 
     @Transactional(readOnly = true)
     @Override
-    public Set<NotificationDTO> getNotifications() {
+    public List<NotificationDTO> getNotifications() {
         return notificationRepository.findAll().stream()
                 .filter(notification -> !notification.getReceived())
                 .map(notificationMapper::map)
-                .collect(Collectors.toSet());
+                .sorted(Comparator.comparing(NotificationDTO::createdAt)
+                        .thenComparing(NotificationDTO::priority)
+                        .reversed())
+                .collect(Collectors.toList());
     }
 
     @Transactional

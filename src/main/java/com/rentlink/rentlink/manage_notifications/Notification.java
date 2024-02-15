@@ -1,5 +1,6 @@
 package com.rentlink.rentlink.manage_notifications;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -7,11 +8,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDate;
-import java.util.UUID;
 
 @Entity
 @Table(name = "notification", schema = "rentlink")
@@ -29,7 +29,8 @@ public class Notification {
 
     private Boolean received;
 
-    private LocalDate dueDate;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     private Priority priority;
