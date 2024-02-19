@@ -1,16 +1,14 @@
 package com.rentlink.rentlink.manage_tenant_data;
 
 import com.rentlink.rentlink.manage_owner_data.UnitOwnerNotFoundException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -25,16 +23,36 @@ class TenantManagement implements TenantExternalAPI {
     }
 
     @Override
-    public Set<TenantDTO> getTenants(Integer page, Integer pageSize) {
-        Stream<Tenant> stream;
-        if (page != null && pageSize != null) {
-            Pageable pageable = PageRequest.of(page, pageSize);
-            stream = StreamSupport.stream(tenantRepository.findAll(pageable).spliterator(), false);
-        } else {
-            stream = tenantRepository.findAll().stream();
+    public Set<TenantDTO> getTenants() {
+        return tenantRepository.findAll().stream().map(tenantMapper::map).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<TenantDTO> searchTenants(Integer page, Integer pageSize, SearchTenant searchTenant) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Specification<Tenant> specification = Specification.where(null);
+        if (searchTenant.name() != null) {
+            specification = specification.or(
+                    TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.NAME, searchTenant.name()));
+        }
+        if (searchTenant.name() != null) {
+            specification = specification.or(
+                    TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.SURNAME, searchTenant.surname()));
+        }
+        if (searchTenant.phone() != null) {
+            specification = specification.or(
+                    TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.PHONE, searchTenant.phone()));
+        }
+        if (searchTenant.email() != null) {
+            specification = specification.or(
+                    TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.EMAIL, searchTenant.email()));
         }
 
-        return stream.map(tenantMapper::map).collect(Collectors.toSet());
+        return tenantRepository
+                .findAll(specification, pageable)
+                .get()
+                .map(tenantMapper::map)
+                .collect(Collectors.toSet());
     }
 
     @Override

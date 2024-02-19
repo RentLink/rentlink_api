@@ -1,5 +1,7 @@
 package com.rentlink.rentlink.manage_rental_process;
 
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,30 +14,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/api/rentals-process")
 @RequiredArgsConstructor
 class RentalProcessEndpoint {
 
-    private final RentalProcessManagement rentalProcessManagement;
+    private final RentalProcessExternalAPI processExternalAPI;
 
     @GetMapping
     List<RentalProcessDTO> getRentalProcessesForOption(@RequestParam(value = "rentalOptionId") UUID rentalOptionId) {
-        return rentalProcessManagement.getRentalProcessesForOption(rentalOptionId);
+        return processExternalAPI.getRentalProcessesForOption(rentalOptionId);
     }
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     RentalProcessDTO createRentalProcess(@RequestBody RentalProcessDTO rentalProcessDTO) {
-        return rentalProcessManagement.createRentalProcess(rentalProcessDTO);
+        return processExternalAPI.createRentalProcess(rentalProcessDTO);
     }
 
     @PutMapping("/{rentalProcessId}")
-    RentalProcessDTO createRentalProcess(
+    RentalProcessDTO updateRentalProcess(
             @PathVariable UUID rentalProcessId, @RequestBody RentalProcessDTO rentalProcessDTO) {
-        return rentalProcessManagement.updateRentalProcess(rentalProcessId, rentalProcessDTO);
+        return processExternalAPI.updateRentalProcess(rentalProcessId, rentalProcessDTO);
+    }
+
+    @PutMapping("/{rentalProcessId}/reject")
+    RentalProcessDTO rejectRentalProcess(@PathVariable UUID rentalProcessId) {
+        return processExternalAPI.rejectRentalProcess(rentalProcessId);
     }
 }

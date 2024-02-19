@@ -126,6 +126,7 @@ CREATE TABLE IF NOT EXISTS notification
     title varchar(255),
     description varchar(255),
     priority varchar(20),
+    created_at timestamp,
     received bool
 );
 
@@ -133,6 +134,8 @@ CREATE TABLE IF NOT EXISTS rental_process
 (
     id UUID PRIMARY KEY,
     rental_option_id UUID,
+    status VARCHAR(50),
     definition JSONB,
-    current_step_id UUID
+    current_step_id UUID,
+    updated_at timestamp
 )

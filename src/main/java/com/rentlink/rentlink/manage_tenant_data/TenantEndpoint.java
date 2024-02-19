@@ -1,5 +1,10 @@
 package com.rentlink.rentlink.manage_tenant_data;
 
+import com.rentlink.rentlink.manage_file_templates.DocTemplate;
+import com.rentlink.rentlink.manage_file_templates.FileTemplatesInternalAPI;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,12 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Set;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tenant")
@@ -22,6 +23,7 @@ import java.util.UUID;
 class TenantEndpoint {
 
     private final TenantExternalAPI tenantExternalAPI;
+    private final FileTemplatesInternalAPI fileTemplatesInternalAPI;
 
     @GetMapping("/{tenantId}")
     public TenantDTO getTenant(@PathVariable UUID tenantId) {
@@ -30,16 +32,14 @@ class TenantEndpoint {
 
     @GetMapping("/")
     Set<TenantDTO> getTenants() {
-        return tenantExternalAPI.getTenants(null, null);
+        return tenantExternalAPI.getTenants();
     }
 
-    @GetMapping(
-            value = "",
-            params = {"page", "size"})
-    Set<TenantDTO> getTenants(
-            @RequestParam(value = "page", required = false) int page,
-            @RequestParam(value = "size", required = false) int size) {
-        return tenantExternalAPI.getTenants(page - 1, size);
+    @GetMapping(value = "")
+    Set<TenantDTO> searchTenants(int page, int size, SearchTenant searchTenant) {
+        fileTemplatesInternalAPI.generateFromTemplate(
+                Map.of("current_date", "2024-01-01", "current_city", "Warszawa"), DocTemplate.CONTRACT);
+        return tenantExternalAPI.searchTenants(page - 1, size, searchTenant);
     }
 
     @PostMapping("/")

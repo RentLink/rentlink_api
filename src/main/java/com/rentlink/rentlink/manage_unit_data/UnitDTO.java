@@ -2,7 +2,6 @@ package com.rentlink.rentlink.manage_unit_data;
 
 import com.rentlink.rentlink.manage_rental_options.RentalOptionDTO;
 import io.soabase.recordbuilder.core.RecordBuilder;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
