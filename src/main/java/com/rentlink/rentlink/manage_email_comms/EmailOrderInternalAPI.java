@@ -1,6 +1,6 @@
 package com.rentlink.rentlink.manage_email_comms;
 
-interface EmailOrderInternalAPI {
+public interface EmailOrderInternalAPI {
 
     void acceptEmailSendOrder(EmailOrderDTO emailOrderDTO);
 }

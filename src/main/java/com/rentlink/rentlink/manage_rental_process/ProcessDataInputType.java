@@ -5,5 +5,6 @@ enum ProcessDataInputType {
     TEXT_AREA,
     NUMERIC,
     SELECT,
+    MULTISELECT,
     DATE
 }

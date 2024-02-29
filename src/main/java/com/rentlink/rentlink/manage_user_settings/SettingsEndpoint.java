@@ -1,10 +1,12 @@
 package com.rentlink.rentlink.manage_user_settings;
 
+import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -25,5 +27,10 @@ public class SettingsEndpoint {
     public ResponseEntity<String> uploadFile(@RequestPart(value = "files") MultipartFile[] files) {
         settingsExternalAPI.uploadFiles(Set.of(files));
         return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    @GetMapping("/list-files")
+    public List<String> listFiles() {
+        return settingsExternalAPI.listFiles();
     }
 }

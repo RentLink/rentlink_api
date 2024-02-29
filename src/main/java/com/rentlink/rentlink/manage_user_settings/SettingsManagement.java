@@ -1,7 +1,9 @@
 package com.rentlink.rentlink.manage_user_settings;
 
+import com.rentlink.rentlink.manage_files.FileName;
 import com.rentlink.rentlink.manage_files.FileToSave;
 import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +20,12 @@ public class SettingsManagement implements SettingsExternalAPI {
     public void uploadFiles(Set<MultipartFile> multipartFiles) {
         filesManagerInternalAPI.saveFiles(
                 multipartFiles.stream().map(mp -> new FileToSave("default", mp)).collect(Collectors.toSet()));
+    }
+
+    @Override
+    public List<String> listFiles() {
+        return filesManagerInternalAPI.getFileNames("default").stream()
+                .map(FileName::name)
+                .collect(Collectors.toList());
     }
 }

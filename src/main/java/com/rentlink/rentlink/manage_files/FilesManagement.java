@@ -1,10 +1,12 @@
 package com.rentlink.rentlink.manage_files;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +33,43 @@ public class FilesManagement implements FilesManagerInternalAPI {
         files.stream().filter(Objects::nonNull).forEach(file -> saveFile(file, rootFilesDir));
     }
 
+    @Override
+    public List<FileName> getFileNames(String subdirectory) {
+        try (var stream = Files.list(Paths.get(rootFilesDir))) {
+            return stream.filter(file -> !Files.isDirectory(file))
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .map(FileName::new)
+                    .toList();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<FileDTO> getFiles(String subdirectory, Set<FileName> fileNames) {
+        if (fileNames.isEmpty()) {
+            return List.of();
+        }
+        try (var stream = Files.list(Paths.get(rootFilesDir))) {
+            var names = fileNames.stream().map(FileName::name).toList();
+            return stream.filter(path -> !Files.isDirectory(path))
+                    .filter(path -> names.contains(path.getFileName().toString()))
+                    .map(path -> new File(path.toUri()))
+                    .map(file -> new FileDTO(file.getName(), file))
+                    .toList();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void saveFile(FileToSave file, String dir) {
         try {
             if (file.file().isEmpty()) {
                 return;
             }
             Path destination = Paths.get(dir + file.subdirectory())
-                    .resolve(file.file().getOriginalFilename())
+                    .resolve(Objects.requireNonNull(file.file().getOriginalFilename()))
                     .normalize()
                     .toAbsolutePath();
             Files.createDirectories(destination.getParent());
