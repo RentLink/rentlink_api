@@ -1,14 +1,21 @@
 package com.rentlink.rentlink.manage_rental_process;
 
+import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
+
+    private final FilesManagerInternalAPI filesManagerInternalAPI;
+
     @Override
     public List<ProcessDefinitionDTO> getDefinitions() {
         return emptyDefinitions();
@@ -21,30 +28,27 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                         "Pełny proces",
                         ProcessDefinitionType.SYSTEM,
                         List.of(
-                                createInitialStep(null, null, null),
+                                createInitialStep(),
                                 createMeetStep(),
+                                createSendDocsStep(),
                                 createAwaitingDocsStep(),
                                 createVerificationStep())),
                 new ProcessDefinitionDTO(
                         UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabe"),
                         "Skrócony proces",
                         ProcessDefinitionType.SYSTEM,
-                        List.of(createInitialStep(null, null, null), createMeetStep())));
+                        List.of(createInitialStep(), createMeetStep())));
     }
 
-    private ProcessStepDTO createInitialStep(String name, String phone, String email) {
-        ProcessDataInputDTO<String> nameStep =
-                ProcessDataInputDTO.createLiteralProcessEntryValue("Nazwa", false, 1, name);
-        ProcessDataInputDTO<String> phoneStep =
-                ProcessDataInputDTO.createLiteralProcessEntryValue("Telefon", false, 2, phone);
-        ProcessDataInputDTO<String> emailStep =
-                ProcessDataInputDTO.createLiteralProcessEntryValue("E-mail", true, 3, email);
+    private ProcessStepDTO createInitialStep() {
+        ProcessDataInputDTO<String> nameStep = ProcessDataInputDTO.createLiteralProcessEntryValue("Nazwa", false, 1);
+        ProcessDataInputDTO<String> phoneStep = ProcessDataInputDTO.createLiteralProcessEntryValue("Telefon", false, 2);
         return new ProcessStepDTO(
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabf"),
                 "Wstępny kontakt",
                 1,
                 ProcessStepType.STEP,
-                List.of(nameStep, phoneStep, emailStep));
+                List.of(nameStep, phoneStep));
     }
 
     private ProcessStepDTO createMeetStep() {
@@ -58,17 +62,35 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                 List.of(name));
     }
 
+    private ProcessStepDTO createSendDocsStep() {
+        ProcessDataInputDTO<String> email = ProcessDataInputDTO.createLiteralProcessEntryValue("E-mail", false, 1);
+        ProcessDataInputDTO<List<String>> fileList = ProcessDataInputDTO.createMultiSelectValue(
+                "Lista dokumentów",
+                false,
+                2,
+                filesManagerInternalAPI.getFileNames("").stream()
+                        .map(fileDTO -> new ProcessDataInputSelectValueDTO(fileDTO.name()))
+                        .collect(Collectors.toSet()),
+                null);
+        return new ProcessStepDTO(
+                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab2"),
+                "Przesłanie dokumentów",
+                3,
+                ProcessStepType.SEND_DOCS,
+                List.of(email, fileList));
+    }
+
     private ProcessStepDTO createAwaitingDocsStep() {
         return new ProcessStepDTO(
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab1"),
                 "Oczekiwanie na dokumenty",
-                3,
-                ProcessStepType.SEND_DOCS,
+                4,
+                ProcessStepType.STEP,
                 Collections.emptyList());
     }
 
     private ProcessStepDTO createVerificationStep() {
-        ProcessDataInputDTO<String> identityVerification = ProcessDataInputDTO.createEnumeratedProcessEntryValue(
+        ProcessDataInputDTO<String> identityVerification = ProcessDataInputDTO.createSelectValue(
                 "Weryfikacja tożsamości",
                 false,
                 1,
@@ -76,7 +98,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                         new ProcessDataInputSelectValueDTO(VerificationOutcome.POSITIVE.name()),
                         new ProcessDataInputSelectValueDTO(VerificationOutcome.NEGATIVE.name())),
                 null);
-        ProcessDataInputDTO<String> incomeVerification = ProcessDataInputDTO.createEnumeratedProcessEntryValue(
+        ProcessDataInputDTO<String> incomeVerification = ProcessDataInputDTO.createSelectValue(
                 "Weryfikacja dochodu",
                 false,
                 2,
@@ -84,7 +106,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                         new ProcessDataInputSelectValueDTO(VerificationOutcome.POSITIVE.name()),
                         new ProcessDataInputSelectValueDTO(VerificationOutcome.NEGATIVE.name())),
                 null);
-        ProcessDataInputDTO<String> surveyVerification = ProcessDataInputDTO.createEnumeratedProcessEntryValue(
+        ProcessDataInputDTO<String> surveyVerification = ProcessDataInputDTO.createSelectValue(
                 "Weryfikacja ankiety",
                 false,
                 3,
@@ -95,7 +117,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
         return new ProcessStepDTO(
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab3"),
                 "Weryfikacja najemcy",
-                4,
+                5,
                 ProcessStepType.VALIDATION,
                 List.of(identityVerification, incomeVerification, surveyVerification));
     }

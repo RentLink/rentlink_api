@@ -52,17 +52,13 @@ class RentalProcess {
     }
 
     RentalProcess calculateCurrentStepId() {
-        definition.steps().sort(Comparator.comparing(ProcessStepDTO::order));
-        for (ProcessStepDTO processStepDTO : definition.steps()) {
-            boolean missingFields = processStepDTO.inputs().stream()
-                    .filter(processDataInputDTO -> !processDataInputDTO.isOptional())
-                    .map(ProcessDataInputDTO::value)
-                    .anyMatch(Objects::isNull);
-            if (missingFields) {
-                this.currentStepId = processStepDTO.stepId();
-                break;
-            }
-        }
+        this.currentStepId = definition.steps().stream()
+                .filter(processStepDTO -> processStepDTO.inputs().stream()
+                        .filter(processDataInputDTO -> !processDataInputDTO.isOptional())
+                        .allMatch(processDataInputDTO -> processDataInputDTO.value() == null))
+                .min(Comparator.comparing(ProcessStepDTO::order))
+                .orElseThrow(RuntimeException::new)
+                .stepId();
         return this;
     }
 
@@ -78,5 +74,22 @@ class RentalProcess {
             this.status = RentalProcessStatus.COMPLETED;
         }
         return this;
+    }
+
+    UUID previousStep() {
+        return definition.steps().stream()
+                .filter(processStepDTO -> processStepDTO.inputs().stream()
+                        .filter(processDataInputDTO -> !processDataInputDTO.isOptional())
+                        .allMatch(processDataInputDTO -> processDataInputDTO.value() != null))
+                .max(Comparator.comparing(ProcessStepDTO::order))
+                .orElseThrow(RuntimeException::new)
+                .stepId();
+    }
+
+    ProcessStepDTO currentStep() {
+        return definition.steps().stream()
+                .filter(processStepDTO -> processStepDTO.stepId().equals(currentStepId))
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
     }
 }

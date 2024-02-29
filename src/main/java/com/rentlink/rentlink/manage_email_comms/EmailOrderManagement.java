@@ -1,28 +1,49 @@
 package com.rentlink.rentlink.manage_email_comms;
 
-import io.vavr.control.Try;
+import com.rentlink.rentlink.manage_files.FileDTO;
+import com.rentlink.rentlink.manage_files.FileName;
+import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class EmailOrderManagement implements EmailOrderInternalAPI {
+class EmailOrderManagement implements EmailOrderInternalAPI {
 
-    //    private final JavaMailSender mailSender;
-    //
+    private final EmailSender emailSender;
+
+    private final FilesManagerInternalAPI filesManagerInternalAPI;
+
+    private final EmailOrderRepository emailOrderRepository;
+
+    private final EmailOrderMapper emailOrderMapper;
+
     @Override
+    @Transactional
+    @Async
     public void acceptEmailSendOrder(EmailOrderDTO emailOrderDTO) {
-        Try.run(() -> {
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setFrom("office@rentlink.io");
-                    message.setTo(emailOrderDTO.email());
-                    message.setSubject(emailOrderDTO.subject());
-                    message.setText(emailOrderDTO.message());
-                    //                    mailSender.send(message);
-                })
-                .onFailure(e -> log.error("OUTBOX!", e));
+        var files =
+                filesManagerInternalAPI
+                        .getFiles(
+                                "",
+                                emailOrderDTO.files().stream()
+                                        .map(FileName::new)
+                                        .collect(Collectors.toSet()))
+                        .stream()
+                        .map(FileDTO::file)
+                        .collect(Collectors.toList());
+        // TODO: add retry logic
+        var emailSendTrial = emailSender.executeEmailSend(emailOrderDTO, files);
+        if (emailSendTrial.isFailure()) {
+            log.info("Failed to send email order, saving it to database, we will retry later");
+
+            // TODO: add fatal handling
+            emailOrderRepository.save(emailOrderMapper.map(emailOrderDTO));
+        }
     }
 }

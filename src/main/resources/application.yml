@@ -19,21 +19,23 @@ spring:
     multipart:
       max-file-size: 2MB
       max-request-size: 10MB
-#  mail:
-#    host: localhost
-#    port: 1025
-#    username: test
-#    password: test
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: false
+  mail:
+    host: ssl0.ovh.net
+    port: 587
+    username: ${MAIL_USERNAME:changeit}
+    password: ${MAIL_PASSWORD:changeit}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+    protocol: smtp
+    test-connection: true
 
 rentlink:
   images:
     dir: "/opt/rentlink/images/"
   files:
     dir: "/opt/rentlink/files/"
-
