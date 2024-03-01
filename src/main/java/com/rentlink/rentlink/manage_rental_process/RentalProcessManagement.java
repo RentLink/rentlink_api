@@ -19,6 +19,8 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
 
     private final RentalProcessMapper rentalProcessMapper;
 
+    private final InternalRentalProcessMapper internalRentalProcessMapper;
+
     private final ProcessDefinitionManagement processDefinitionManagement;
 
     private final EmailOrderInternalAPI emailOrderInternalAPI;
@@ -85,9 +87,9 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
     }
 
     @Override
-    public List<RentalProcessDTO> findRentalProcessesUpdatedBefore(Instant instant) {
+    public List<InternalRentalProcessDTO> findRentalProcessesUpdatedBefore(Instant instant) {
         return rentalProcessRepository.findAllByUpdatedAtBefore(instant).stream()
-                .map(rentalProcessMapper::map)
+                .map(internalRentalProcessMapper::map)
                 .collect(Collectors.toList());
     }
 }

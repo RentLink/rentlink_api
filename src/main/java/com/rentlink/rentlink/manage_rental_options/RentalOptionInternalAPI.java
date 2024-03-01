@@ -6,9 +6,9 @@ import java.util.UUID;
 
 public interface RentalOptionInternalAPI {
 
-    Set<RentalOptionDTO> getRentalOptionsByUnitId(UUID unitId);
+    Set<RentalOptionDTO> getRentalOptionsByUnitId(UUID unitId, UUID accountId);
 
-    Optional<RentalOptionDTO> getRentalOptionsById(UUID id);
+    Optional<RentalOptionDTO> getRentalOptionsById(UUID id, UUID accountId);
 
-    RentalOptionDTO upsert(RentalOptionDTO rentalOptionDTO, UUID unitId);
+    RentalOptionDTO upsert(RentalOptionDTO rentalOptionDTO, UUID unitId, UUID accountId);
 }

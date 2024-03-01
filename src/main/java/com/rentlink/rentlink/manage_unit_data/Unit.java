@@ -24,6 +24,9 @@ class Unit {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "account_id")
+    private UUID accountId;
+
     private String name;
 
     @Column(name = "unit_type")

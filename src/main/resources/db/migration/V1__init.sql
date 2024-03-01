@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS unit_owner
 (
     id                       UUID PRIMARY KEY,
+    account_id               UUID NOT NULL,
     legal_personality        VARCHAR(20),
     name                     VARCHAR(50),
     surname                  VARCHAR(50),
@@ -45,6 +46,7 @@ CREATE TABLE IF NOT EXISTS unit_owner_emergency_contact
 CREATE TABLE IF NOT EXISTS tenant
 (
     id                       UUID PRIMARY KEY,
+    account_id               UUID NOT NULL,
     legal_personality        VARCHAR(20),
     name                     VARCHAR(50),
     surname                  VARCHAR(50),
@@ -91,6 +93,7 @@ CREATE TABLE IF NOT EXISTS tenant_emergency_contact
 CREATE TABLE IF NOT EXISTS unit
 (
     id UUID PRIMARY KEY,
+    account_id               UUID NOT NULL,
     name varchar(255),
     unit_type varchar(20),
     rental_type varchar(20),
@@ -115,6 +118,7 @@ CREATE TABLE IF NOT EXISTS unit
 CREATE TABLE IF NOT EXISTS rental_option
 (
     id UUID PRIMARY KEY,
+    account_id               UUID NOT NULL,
     unit_id UUID,
     name varchar(255)
 );
@@ -123,6 +127,7 @@ CREATE TABLE IF NOT EXISTS rental_option
 CREATE TABLE IF NOT EXISTS notification
 (
     id UUID PRIMARY KEY,
+    account_id               UUID NOT NULL,
     title varchar(255),
     description varchar(255),
     priority varchar(20),
@@ -133,6 +138,7 @@ CREATE TABLE IF NOT EXISTS notification
 CREATE TABLE IF NOT EXISTS rental_process
 (
     id UUID PRIMARY KEY,
+    account_id               UUID NOT NULL,
     rental_option_id UUID,
     status VARCHAR(50),
     definition JSONB,

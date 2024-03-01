@@ -10,6 +10,7 @@ class TenantSpecification {
 
     @RequiredArgsConstructor
     enum TestSpecKeys {
+        ACCOUNT_ID("accountId"),
         NAME("name"),
         SURNAME("surname"),
         EMAIL("email"),

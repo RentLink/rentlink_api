@@ -5,13 +5,13 @@ import java.util.UUID;
 
 interface UnitOwnerExternalAPI {
 
-    UnitOwnerDTO getUnitOwner(UUID ownerId);
+    UnitOwnerDTO getUnitOwner(UUID ownerId, UUID accountId);
 
-    Set<UnitOwnerDTO> getUnitOwners(Integer page, Integer pageSize);
+    Set<UnitOwnerDTO> getUnitOwners(UUID accountId, Integer page, Integer pageSize);
 
-    UnitOwnerDTO addUnitOwner(UnitOwnerDTO unitOwnerDTO);
+    UnitOwnerDTO addUnitOwner(UUID accountId, UnitOwnerDTO unitOwnerDTO);
 
-    UnitOwnerDTO patchUnitOwner(UUID id, UnitOwnerDTO unitOwnerDTO);
+    UnitOwnerDTO patchUnitOwner(UUID id, UUID accountId, UnitOwnerDTO unitOwnerDTO);
 
-    void deleteUnitOwner(UUID ownerId);
+    void deleteUnitOwner(UUID ownerId, UUID accountId);
 }

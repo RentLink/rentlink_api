@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,40 +17,43 @@ class UnitOwnerManagement implements UnitOwnerExternalAPI {
     private final UnitOwnerMapper unitOwnerMapper;
 
     @Override
-    public UnitOwnerDTO getUnitOwner(UUID ownerId) {
+    public UnitOwnerDTO getUnitOwner(UUID ownerId, UUID accountId) {
         return unitOwnerRepository
-                .findById(ownerId)
+                .findByAccountIdAndId(accountId, ownerId)
                 .map(unitOwnerMapper::map)
                 .orElseThrow(UnitOwnerNotFoundException::new);
     }
 
     @Override
-    public Set<UnitOwnerDTO> getUnitOwners(Integer page, Integer pageSize) {
+    public Set<UnitOwnerDTO> getUnitOwners(UUID accountId, Integer page, Integer pageSize) {
         Stream<UnitOwner> stream;
         if (page != null && pageSize != null) {
             Pageable pageable = PageRequest.of(page, pageSize);
-            stream = StreamSupport.stream(unitOwnerRepository.findAll(pageable).spliterator(), false);
+            stream = unitOwnerRepository.findAllByAccountId(accountId, pageable);
         } else {
-            stream = unitOwnerRepository.findAll().stream();
+            stream = unitOwnerRepository.findAllByAccountId(accountId);
         }
 
         return stream.map(unitOwnerMapper::map).collect(Collectors.toSet());
     }
 
     @Override
-    public UnitOwnerDTO addUnitOwner(UnitOwnerDTO unitOwnerDTO) {
-        return unitOwnerMapper.map(unitOwnerRepository.save(unitOwnerMapper.map(unitOwnerDTO)));
+    public UnitOwnerDTO addUnitOwner(UUID accountId, UnitOwnerDTO unitOwnerDTO) {
+        UnitOwner unitOwner = unitOwnerMapper.map(unitOwnerDTO);
+        unitOwner.setAccountId(accountId);
+        return unitOwnerMapper.map(unitOwnerRepository.save(unitOwner));
     }
 
     @Override
-    public UnitOwnerDTO patchUnitOwner(UUID id, UnitOwnerDTO unitOwnerDTO) {
-        UnitOwner unitOwner = unitOwnerRepository.findById(id).orElseThrow(UnitOwnerNotFoundException::new);
+    public UnitOwnerDTO patchUnitOwner(UUID id, UUID accountId, UnitOwnerDTO unitOwnerDTO) {
+        UnitOwner unitOwner =
+                unitOwnerRepository.findByAccountIdAndId(accountId, id).orElseThrow(UnitOwnerNotFoundException::new);
         unitOwnerMapper.update(unitOwnerDTO, unitOwner);
         return unitOwnerMapper.map(unitOwnerRepository.save(unitOwner));
     }
 
     @Override
-    public void deleteUnitOwner(UUID ownerId) {
-        unitOwnerRepository.deleteById(ownerId);
+    public void deleteUnitOwner(UUID ownerId, UUID accountId) {
+        unitOwnerRepository.deleteByAccountIdAndId(accountId, ownerId);
     }
 }

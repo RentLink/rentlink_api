@@ -28,6 +28,9 @@ class RentalProcess {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "account_id")
+    private UUID accountId;
+
     @Column(name = "rental_option_id")
     private UUID rentalOptionId;
 

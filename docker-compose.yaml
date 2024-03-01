@@ -44,7 +44,7 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - ./src/main/resources:/opt/rentlink/files
+      - ./local_files:/opt/rentlink/files
     environment:
       PORT: 8081
       DATABASE_URL: "jdbc:postgresql://database:5432/rentlink"

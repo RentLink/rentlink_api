@@ -1,6 +1,8 @@
 package com.rentlink.rentlink.manage_notifications;
 
+import java.util.UUID;
+
 public interface NotificationInternalAPI {
 
-    void createNotification(NotificationDTO notificationDTO);
+    void createNotification(UUID accountId, NotificationDTO notificationDTO);
 }
