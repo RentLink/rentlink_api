@@ -43,6 +43,8 @@ services:
       - intranet
     ports:
       - "8081:8081"
+    volumes:
+      - /opt/rentlink/files:/opt/rentlink/files
     environment:
       PORT: 8081
       DATABASE_URL: "jdbc:postgresql://database:5432/rentlink"
