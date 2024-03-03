@@ -17,6 +17,7 @@ record UnitDTO(
         RentalOptionType rentalOptionType,
         Integer surface,
         Short roomsNo,
+        Short totalRentalAgreementsNumber,
         String city,
         String postalCode,
         String street,

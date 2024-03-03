@@ -64,19 +64,24 @@ class UnitManagement implements UnitExternalAPI {
     public UnitDTO addUnit(UnitDTO unitDTO, UUID accountId) {
         Unit unit = unitMapper.map(unitDTO);
         unit.setAccountId(accountId);
+        if(unitDTO.rentalType().equals(RentalType.ENTIRE_PLACE)) {
+            unit.setTotalRentalAgreementsNumber((short) 1);
+        }
 
         UnitDTO result = unitMapper.map(unitRepository.save(unit));
-        if (result.rentalType().equals(RentalType.WHOLE)) {
-            Set<RentalOptionDTO> rentalOptionResult = Set.of(
+        Set<RentalOptionDTO> rentalOptionResult;
+        if (result.rentalType().equals(RentalType.ENTIRE_PLACE)) {
+
+            rentalOptionResult = Set.of(
                     rentalOptionInternalAPI.upsert(new RentalOptionDTO(null, "Całe miejsce"), result.id(), accountId));
-            return result.withRentalOptions(rentalOptionResult);
-        } else {
-            Set<RentalOptionDTO> rentalOptionResult = IntStream.range(1, result.roomsNo() + 1)
+        }
+        else {
+            rentalOptionResult = IntStream.range(1, result.totalRentalAgreementsNumber() + 1)
                     .mapToObj(no -> rentalOptionInternalAPI.upsert(
                             new RentalOptionDTO(null, "Pokój nr %s".formatted(no)), result.id(), accountId))
                     .collect(Collectors.toSet());
-            return result.withRentalOptions(rentalOptionResult);
         }
+        return result.withRentalOptions(rentalOptionResult);
     }
 
     @Override
