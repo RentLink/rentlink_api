@@ -1,9 +1,9 @@
 package com.rentlink.rentlink.manage_rental_process;
 
+import com.rentlink.rentlink.manage_email_outbound.EmailOrderInternalAPI;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rentlink.rentlink.manage_email_comms.EmailOrderInternalAPI;
-import com.rentlink.rentlink.manage_email_comms.InternalEmailOrderDTO;
+import com.rentlink.rentlink.manage_email_outbound.InternalEmailOrderDTO;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;

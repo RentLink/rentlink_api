@@ -1,4 +1,4 @@
-package com.rentlink.rentlink.manage_email_comms;
+package com.rentlink.rentlink.manage_email_outbound;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

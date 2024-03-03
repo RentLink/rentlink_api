@@ -2,6 +2,7 @@ package com.rentlink.rentlink.manage_unit_data;
 
 import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -13,6 +14,7 @@ interface UnitMapper {
 
     UnitDTO map(Unit unit);
 
+    @Mapping(target = "accountId", ignore = true)
     Unit map(UnitDTO unitDTO);
 
     @InheritConfiguration

@@ -1,4 +1,4 @@
-package com.rentlink.rentlink.manage_email_comms;
+package com.rentlink.rentlink.manage_email_outbound;
 
 import io.vavr.control.Try;
 import jakarta.mail.MessagingException;

@@ -17,6 +17,7 @@ interface TenantMapper {
     TenantDTO map(Tenant tenant);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "accountId", ignore = true)
     Tenant map(TenantDTO tenantDTO);
 
     @InheritConfiguration

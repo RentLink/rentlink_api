@@ -18,6 +18,7 @@ interface UnitOwnerMapper {
     UnitOwnerDTO map(UnitOwner unitOwner);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "accountId", ignore = true)
     UnitOwner map(UnitOwnerDTO owner);
 
     @InheritConfiguration
