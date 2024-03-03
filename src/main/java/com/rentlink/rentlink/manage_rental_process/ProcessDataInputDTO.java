@@ -51,7 +51,6 @@ record ProcessDataInputDTO<T>(
                 .append(order, that.order)
                 .append(label, that.label)
                 .append(type, that.type)
-                .append(selectionValues, that.selectionValues)
                 .isEquals();
     }
 
@@ -62,7 +61,6 @@ record ProcessDataInputDTO<T>(
                 .append(type)
                 .append(isOptional)
                 .append(order)
-                .append(selectionValues)
                 .toHashCode();
     }
 }

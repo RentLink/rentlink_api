@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,26 +30,30 @@ class UnitManagement implements UnitExternalAPI {
 
     @Override
     @Transactional(readOnly = true)
-    public UnitDTO getUnit(UUID unitId) {
-        UnitDTO unit = unitRepository.findById(unitId).map(unitMapper::map).orElseThrow(UnitNotFoundException::new);
-        Set<RentalOptionDTO> rentalOptions = rentalOptionInternalAPI.getRentalOptionsByUnitId(unitId);
+    public UnitDTO getUnit(UUID unitId, UUID accountId) {
+        UnitDTO unit = unitRepository
+                .findByAccountIdAndId(accountId, unitId)
+                .map(unitMapper::map)
+                .orElseThrow(UnitNotFoundException::new);
+        Set<RentalOptionDTO> rentalOptions = rentalOptionInternalAPI.getRentalOptionsByUnitId(unitId, accountId);
         return unit.withRentalOptions(rentalOptions);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Set<UnitDTO> getUnits(Integer page, Integer pageSize) {
+    public Set<UnitDTO> getUnits(UUID accountId, Integer page, Integer pageSize) {
         Stream<Unit> stream;
         if (page != null && pageSize != null) {
             Pageable pageable = PageRequest.of(page, pageSize);
-            stream = StreamSupport.stream(unitRepository.findAll(pageable).spliterator(), false);
+            stream = unitRepository.findAllByAccountId(accountId, pageable);
         } else {
-            stream = unitRepository.findAll().stream();
+            stream = unitRepository.findByAccountId(accountId);
         }
 
         return stream.map(unitMapper::map)
                 .map(unitDTO -> {
-                    Set<RentalOptionDTO> rentalOptions = rentalOptionInternalAPI.getRentalOptionsByUnitId(unitDTO.id());
+                    Set<RentalOptionDTO> rentalOptions =
+                            rentalOptionInternalAPI.getRentalOptionsByUnitId(unitDTO.id(), accountId);
                     return unitDTO.withRentalOptions(rentalOptions);
                 })
                 .collect(Collectors.toSet());
@@ -58,16 +61,19 @@ class UnitManagement implements UnitExternalAPI {
 
     @Override
     @Transactional
-    public UnitDTO addUnit(UnitDTO unitDTO) {
-        UnitDTO result = unitMapper.map(unitRepository.save(unitMapper.map(unitDTO)));
+    public UnitDTO addUnit(UnitDTO unitDTO, UUID accountId) {
+        Unit unit = unitMapper.map(unitDTO);
+        unit.setAccountId(accountId);
+
+        UnitDTO result = unitMapper.map(unitRepository.save(unit));
         if (result.rentalType().equals(RentalType.WHOLE)) {
-            Set<RentalOptionDTO> rentalOptionResult =
-                    Set.of(rentalOptionInternalAPI.upsert(new RentalOptionDTO(null, "Całe miejsce"), result.id()));
+            Set<RentalOptionDTO> rentalOptionResult = Set.of(
+                    rentalOptionInternalAPI.upsert(new RentalOptionDTO(null, "Całe miejsce"), result.id(), accountId));
             return result.withRentalOptions(rentalOptionResult);
         } else {
             Set<RentalOptionDTO> rentalOptionResult = IntStream.range(1, result.roomsNo() + 1)
                     .mapToObj(no -> rentalOptionInternalAPI.upsert(
-                            new RentalOptionDTO(null, "Pokój nr %s".formatted(no)), result.id()))
+                            new RentalOptionDTO(null, "Pokój nr %s".formatted(no)), result.id(), accountId))
                     .collect(Collectors.toSet());
             return result.withRentalOptions(rentalOptionResult);
         }
@@ -75,24 +81,25 @@ class UnitManagement implements UnitExternalAPI {
 
     @Override
     @Transactional
-    public UnitDTO updateUnit(UUID id, UnitDTO unitDTO) {
-        Unit unit = unitRepository.findById(id).orElseThrow(UnitNotFoundException::new);
+    public UnitDTO updateUnit(UUID id, UUID accountId, UnitDTO unitDTO) {
+        Unit unit = unitRepository.findByAccountIdAndId(accountId, id).orElseThrow(UnitNotFoundException::new);
         unitMapper.update(unitDTO, unit);
         UnitDTO result = unitMapper.map(unitRepository.save(unit));
         if (unitDTO.rentalOptions() != null) {
-            unitDTO.rentalOptions().forEach(rentalOptionDTO -> rentalOptionInternalAPI.upsert(rentalOptionDTO, id));
+            unitDTO.rentalOptions()
+                    .forEach(rentalOptionDTO -> rentalOptionInternalAPI.upsert(rentalOptionDTO, id, accountId));
         }
-        return result.withRentalOptions(rentalOptionInternalAPI.getRentalOptionsByUnitId(id));
+        return result.withRentalOptions(rentalOptionInternalAPI.getRentalOptionsByUnitId(id, accountId));
     }
 
     @Override
     @Transactional
-    public void deleteUnit(UUID unitId) {
-        unitRepository.deleteById(unitId);
+    public void deleteUnit(UUID unitId, UUID accountId) {
+        unitRepository.deleteByAccountIdAndId(accountId, unitId);
     }
 
     @Override
-    public void uploadImages(UUID unitId, UUID rentalOptionId, Set<MultipartFile> multipartFiles) {
+    public void uploadImages(UUID unitId, UUID accountId, UUID rentalOptionId, Set<MultipartFile> multipartFiles) {
         if (rentalOptionId == null) {
             uploadUnitImages(unitId, multipartFiles);
         } else {
@@ -109,8 +116,10 @@ class UnitManagement implements UnitExternalAPI {
     }
 
     private void uploadRentalOptionsImages(UUID unitId, UUID rentalOptionId, Set<MultipartFile> multipartFiles) {
-        unitRepository.findById(unitId).orElseThrow(UnitNotFoundException::new);
-        rentalOptionInternalAPI.getRentalOptionsById(rentalOptionId).orElseThrow(RentalOptionFoundException::new);
+        Unit unit = unitRepository.findById(unitId).orElseThrow(UnitNotFoundException::new);
+        rentalOptionInternalAPI
+                .getRentalOptionsById(rentalOptionId, unit.getAccountId())
+                .orElseThrow(RentalOptionFoundException::new);
         var unitSubdir = "%s/%s/rentalOptions/%s".formatted(unitsSubdir, unitId, rentalOptionId);
         filesManagerInternalAPI.saveImages(multipartFiles.stream()
                 .map(mp -> new FileToSave(unitSubdir, mp))

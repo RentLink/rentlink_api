@@ -28,6 +28,9 @@ class RentalProcess {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "account_id")
+    private UUID accountId;
+
     @Column(name = "rental_option_id")
     private UUID rentalOptionId;
 
@@ -73,6 +76,11 @@ class RentalProcess {
         } else {
             this.status = RentalProcessStatus.COMPLETED;
         }
+        return this;
+    }
+
+    RentalProcess withAccountId(UUID accountId) {
+        this.accountId = accountId;
         return this;
     }
 

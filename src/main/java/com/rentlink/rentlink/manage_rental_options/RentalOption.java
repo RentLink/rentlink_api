@@ -20,6 +20,9 @@ public class RentalOption {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "account_id")
+    private UUID accountId;
+
     @Column(name = "unit_id")
     private UUID unitId;
 

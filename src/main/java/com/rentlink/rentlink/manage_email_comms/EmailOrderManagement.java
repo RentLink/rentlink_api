@@ -3,6 +3,7 @@ package com.rentlink.rentlink.manage_email_comms;
 import com.rentlink.rentlink.manage_files.FileDTO;
 import com.rentlink.rentlink.manage_files.FileName;
 import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ class EmailOrderManagement implements EmailOrderInternalAPI {
     @Override
     @Transactional
     @Async
-    public void acceptEmailSendOrder(EmailOrderDTO emailOrderDTO) {
+    public void acceptEmailSendOrder(UUID accountId, EmailOrderDTO emailOrderDTO) {
         var files =
                 filesManagerInternalAPI
                         .getFiles(

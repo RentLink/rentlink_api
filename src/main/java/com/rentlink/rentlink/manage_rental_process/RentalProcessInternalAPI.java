@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface RentalProcessInternalAPI {
 
-    List<RentalProcessDTO> findRentalProcessesUpdatedBefore(Instant instant);
+    List<InternalRentalProcessDTO> findRentalProcessesUpdatedBefore(Instant instant);
 }

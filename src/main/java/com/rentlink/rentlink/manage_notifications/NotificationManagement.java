@@ -19,8 +19,9 @@ class NotificationManagement implements NotificationExternalAPI, NotificationInt
 
     @Transactional(readOnly = true)
     @Override
-    public List<NotificationDTO> getNotifications() {
-        return notificationRepository.findAll().stream()
+    public List<NotificationDTO> getNotifications(UUID accountId) {
+        return notificationRepository
+                .findByAccountIdAndReceived(accountId, false)
                 .filter(notification -> !notification.getReceived())
                 .map(notificationMapper::map)
                 .sorted(Comparator.comparing(NotificationDTO::createdAt)
@@ -31,14 +32,15 @@ class NotificationManagement implements NotificationExternalAPI, NotificationInt
 
     @Transactional
     @Override
-    public void markAsReceived(Set<UUID> notificationIds) {
-        notificationRepository.markAsReceived(notificationIds);
+    public void markAsReceived(UUID accountId, Set<UUID> notificationIds) {
+        notificationRepository.markAsReceived(accountId, notificationIds);
     }
 
     @Transactional
     @Override
-    public void createNotification(NotificationDTO notificationDTO) {
+    public void createNotification(UUID accountId, NotificationDTO notificationDTO) {
         Notification notification = notificationMapper.map(notificationDTO);
+        notification.setAccountId(accountId);
         notificationRepository.save(notification);
     }
 }

@@ -5,15 +5,15 @@ import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
 
 interface UnitExternalAPI {
-    UnitDTO getUnit(UUID unitId);
+    UnitDTO getUnit(UUID unitId, UUID accountId);
 
-    Set<UnitDTO> getUnits(Integer page, Integer pageSize);
+    Set<UnitDTO> getUnits(UUID accountId, Integer page, Integer pageSize);
 
-    UnitDTO addUnit(UnitDTO unitDTO);
+    UnitDTO addUnit(UnitDTO unitDTO, UUID accountId);
 
-    UnitDTO updateUnit(UUID unitId, UnitDTO unitDTO);
+    UnitDTO updateUnit(UUID unitId, UUID accountId, UnitDTO unitDTO);
 
-    void deleteUnit(UUID unitId);
+    void deleteUnit(UUID unitId, UUID accountId);
 
-    void uploadImages(UUID unitId, UUID rentalOptionId, Set<MultipartFile> multipartFiles);
+    void uploadImages(UUID unitId, UUID accountId, UUID rentalOptionId, Set<MultipartFile> multipartFiles);
 }

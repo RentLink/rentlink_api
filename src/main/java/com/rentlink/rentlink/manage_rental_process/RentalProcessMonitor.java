@@ -21,11 +21,11 @@ public class RentalProcessMonitor {
     public void monitor() {
         rentalProcessInternalAPI
                 .findRentalProcessesUpdatedBefore(Instant.now().minus(1, ChronoUnit.DAYS))
-                .forEach(rentalProcessDTO ->
-                        notificationInternalAPI.createNotification(prepareNotification(rentalProcessDTO)));
+                .forEach(internalRentalProcessDTO -> notificationInternalAPI.createNotification(
+                        internalRentalProcessDTO.accountId(), prepareNotification(internalRentalProcessDTO)));
     }
 
-    private NotificationDTO prepareNotification(RentalProcessDTO rentalProcessDTO) {
+    private NotificationDTO prepareNotification(InternalRentalProcessDTO rentalProcessDTO) {
         return NotificationDTO.createNewNotification(
                 "Rental process is outdated",
                 "Rental process with id " + rentalProcessDTO.id() + " is outdated, stuck in status "

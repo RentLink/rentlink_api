@@ -29,6 +29,9 @@ class Tenant {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "account_id")
+    private UUID accountId;
+
     @Column(name = "legal_personality")
     @Enumerated(EnumType.STRING)
     private LegalPersonality legalPersonality;

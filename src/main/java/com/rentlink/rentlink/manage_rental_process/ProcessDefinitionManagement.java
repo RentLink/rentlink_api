@@ -17,11 +17,11 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
     private final FilesManagerInternalAPI filesManagerInternalAPI;
 
     @Override
-    public List<ProcessDefinitionDTO> getDefinitions() {
-        return emptyDefinitions();
+    public List<ProcessDefinitionDTO> getDefinitions(UUID accountId) {
+        return emptyDefinitions(accountId);
     }
 
-    private List<ProcessDefinitionDTO> emptyDefinitions() {
+    private List<ProcessDefinitionDTO> emptyDefinitions(UUID accountId) {
         return List.of(
                 new ProcessDefinitionDTO(
                         UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabf"),
@@ -30,7 +30,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                         List.of(
                                 createInitialStep(),
                                 createMeetStep(),
-                                createSendDocsStep(),
+                                createSendDocsStep(accountId),
                                 createAwaitingDocsStep(),
                                 createVerificationStep())),
                 new ProcessDefinitionDTO(
@@ -62,13 +62,13 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                 List.of(name));
     }
 
-    private ProcessStepDTO createSendDocsStep() {
+    private ProcessStepDTO createSendDocsStep(UUID accountId) {
         ProcessDataInputDTO<String> email = ProcessDataInputDTO.createLiteralProcessEntryValue("E-mail", false, 1);
         ProcessDataInputDTO<List<String>> fileList = ProcessDataInputDTO.createMultiSelectValue(
                 "Lista dokumentów",
                 false,
                 2,
-                filesManagerInternalAPI.getFileNames("").stream()
+                filesManagerInternalAPI.getFileNames(accountId.toString()).stream()
                         .map(fileDTO -> new ProcessDataInputSelectValueDTO(fileDTO.name()))
                         .collect(Collectors.toSet()),
                 null);

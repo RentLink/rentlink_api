@@ -23,6 +23,9 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "account_id")
+    private UUID accountId;
+
     private String title;
 
     private String description;

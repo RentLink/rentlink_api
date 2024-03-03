@@ -18,33 +18,67 @@ class TenantManagement implements TenantExternalAPI {
     private final TenantMapper tenantMapper;
 
     @Override
-    public TenantDTO getTenant(UUID ownerId) {
-        return tenantRepository.findById(ownerId).map(tenantMapper::map).orElseThrow(TenantNotFoundException::new);
+    public TenantDTO getTenant(UUID tenantId, UUID accountId) {
+        return tenantRepository
+                .findByAccountIdAndId(accountId, tenantId)
+                .map(tenantMapper::map)
+                .orElseThrow(TenantNotFoundException::new);
     }
 
     @Override
-    public Set<TenantDTO> getTenants() {
-        return tenantRepository.findAll().stream().map(tenantMapper::map).collect(Collectors.toSet());
+    public Set<TenantDTO> getTenants(UUID accountId) {
+        return tenantRepository
+                .findAllByAccountId(accountId)
+                .map(tenantMapper::map)
+                .collect(Collectors.toSet());
     }
 
     @Override
-    public Set<TenantDTO> searchTenants(Integer page, Integer pageSize, SearchTenant searchTenant) {
+    public Set<TenantDTO> quickSearch(UUID accountId, String value) {
+        Specification<Tenant> specification = Specification.where(null);
+        specification = specification.and(
+                TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.ACCOUNT_ID, accountId.toString()));
+
+        if (value != null) {
+            specification =
+                    specification.or(TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.NAME, value));
+
+            specification =
+                    specification.or(TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.SURNAME, value));
+
+            specification =
+                    specification.or(TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.PHONE, value));
+
+            specification =
+                    specification.or(TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.EMAIL, value));
+        }
+
+        return tenantRepository.findAll(specification).stream()
+                .map(tenantMapper::map)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<TenantDTO> search(Integer page, Integer pageSize, UUID accountId, SearchTenant searchTenant) {
         Pageable pageable = PageRequest.of(page, pageSize);
         Specification<Tenant> specification = Specification.where(null);
+        specification = specification.and(
+                TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.ACCOUNT_ID, accountId.toString()));
+
         if (searchTenant.name() != null) {
-            specification = specification.or(
+            specification = specification.and(
                     TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.NAME, searchTenant.name()));
         }
         if (searchTenant.name() != null) {
-            specification = specification.or(
+            specification = specification.and(
                     TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.SURNAME, searchTenant.surname()));
         }
         if (searchTenant.phone() != null) {
-            specification = specification.or(
+            specification = specification.and(
                     TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.PHONE, searchTenant.phone()));
         }
         if (searchTenant.email() != null) {
-            specification = specification.or(
+            specification = specification.and(
                     TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.EMAIL, searchTenant.email()));
         }
 
@@ -56,19 +90,22 @@ class TenantManagement implements TenantExternalAPI {
     }
 
     @Override
-    public TenantDTO addTenant(TenantDTO tenantDTO) {
-        return tenantMapper.map(tenantRepository.save(tenantMapper.map(tenantDTO)));
+    public TenantDTO addTenant(TenantDTO tenantDTO, UUID accountId) {
+        Tenant tenant = tenantMapper.map(tenantDTO);
+        tenant.setAccountId(accountId);
+        return tenantMapper.map(tenantRepository.save(tenant));
     }
 
     @Override
-    public TenantDTO patchTenant(UUID id, TenantDTO tenantDTO) {
-        Tenant tenant = tenantRepository.findById(id).orElseThrow(UnitOwnerNotFoundException::new);
+    public TenantDTO patchTenant(UUID id, UUID accountId, TenantDTO tenantDTO) {
+        Tenant tenant =
+                tenantRepository.findByAccountIdAndId(accountId, id).orElseThrow(UnitOwnerNotFoundException::new);
         tenantMapper.update(tenantDTO, tenant);
         return tenantMapper.map(tenantRepository.save(tenant));
     }
 
     @Override
-    public void deleteTenant(UUID ownerId) {
-        tenantRepository.deleteById(ownerId);
+    public void deleteTenant(UUID ownerId, UUID accountId) {
+        tenantRepository.deleteByAccountIdAndId(accountId, ownerId);
     }
 }

@@ -5,15 +5,17 @@ import java.util.UUID;
 
 interface TenantExternalAPI {
 
-    TenantDTO getTenant(UUID tenantId);
+    TenantDTO getTenant(UUID tenantId, UUID accountId);
 
-    Set<TenantDTO> getTenants();
+    Set<TenantDTO> getTenants(UUID accountId);
 
-    Set<TenantDTO> searchTenants(Integer page, Integer pageSize, SearchTenant searchTenant);
+    Set<TenantDTO> quickSearch(UUID accountId, String value);
 
-    TenantDTO addTenant(TenantDTO tenantDTO);
+    Set<TenantDTO> search(Integer page, Integer pageSize, UUID accountId, SearchTenant searchTenant);
 
-    TenantDTO patchTenant(UUID id, TenantDTO tenantDTO);
+    TenantDTO addTenant(TenantDTO tenantDTO, UUID accountId);
 
-    void deleteTenant(UUID tenantId);
+    TenantDTO patchTenant(UUID id, UUID accountId, TenantDTO tenantDTO);
+
+    void deleteTenant(UUID tenantId, UUID accountId);
 }

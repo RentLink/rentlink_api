@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface NotificationExternalAPI {
 
-    List<NotificationDTO> getNotifications();
+    List<NotificationDTO> getNotifications(UUID accountId);
 
-    void markAsReceived(Set<UUID> notificationIds);
+    void markAsReceived(UUID accountId, Set<UUID> notificationIds);
 }
