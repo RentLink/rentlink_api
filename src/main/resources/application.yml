@@ -22,7 +22,7 @@ spring:
   mail:
     host: ssl0.ovh.net
     port: 587
-    username: ${MAIL_USERNAME:changeit}
+    username: ${MAIL_USERNAME:support@rentlink.io}
     password: ${MAIL_PASSWORD:changeit}
     properties:
       mail:

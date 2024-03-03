@@ -52,7 +52,9 @@ services:
       PORT: 8081
       DATABASE_URL: "jdbc:postgresql://database:5432/rentlink"
       MAIL_USERNAME: "support@rentlink.io"
-      MAIL_PASSWORD: "changeit"
+      MAIL_PASSWORD: /run/secrets/rentlink_smtp_password
+    secrets:
+      - rentlink_smtp_password
 
   kratos-migrate:
     image: oryd/kratos:v1.0.0
@@ -112,5 +114,10 @@ services:
       - intranet
     volumes:
       - ./oathkeeper:/etc/config/oathkeeper
+
 networks:
   intranet:
+
+secrets:
+  rentlink_smtp_password:
+    file: ./smtp_password
