@@ -5,11 +5,11 @@ import java.util.UUID;
 
 interface RentalProcessExternalAPI {
 
-    RentalProcessDTO createRentalProcess(RentalProcessDTO rentalProcessDTO);
+    RentalProcessDTO createRentalProcess(UUID accountId, RentalProcessDTO rentalProcessDTO);
 
-    List<RentalProcessDTO> getRentalProcessesForOption(UUID rentalProcessId);
+    List<RentalProcessDTO> getRentalProcessesForOption(UUID rentalProcessId, UUID accountId);
 
-    RentalProcessDTO updateRentalProcess(UUID rentalProcessId, RentalProcessDTO rentalProcessDTO);
+    RentalProcessDTO updateRentalProcess(UUID rentalProcessId, UUID accountId, RentalProcessDTO rentalProcessDTO);
 
-    RentalProcessDTO rejectRentalProcess(UUID rentalProcessId);
+    RentalProcessDTO rejectRentalProcess(UUID rentalProcessId, UUID accountId);
 }

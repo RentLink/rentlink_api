@@ -35,7 +35,7 @@ public class FilesManagement implements FilesManagerInternalAPI {
 
     @Override
     public List<FileName> getFileNames(String subdirectory) {
-        try (var stream = Files.list(Paths.get(rootFilesDir))) {
+        try (var stream = Files.list(Paths.get(rootFilesDir + subdirectory))) {
             return stream.filter(file -> !Files.isDirectory(file))
                     .map(Path::getFileName)
                     .map(Path::toString)
@@ -51,7 +51,7 @@ public class FilesManagement implements FilesManagerInternalAPI {
         if (fileNames.isEmpty()) {
             return List.of();
         }
-        try (var stream = Files.list(Paths.get(rootFilesDir))) {
+        try (var stream = Files.list(Paths.get(rootFilesDir + subdirectory))) {
             var names = fileNames.stream().map(FileName::name).toList();
             return stream.filter(path -> !Files.isDirectory(path))
                     .filter(path -> names.contains(path.getFileName().toString()))

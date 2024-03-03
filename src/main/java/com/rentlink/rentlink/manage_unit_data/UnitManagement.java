@@ -47,7 +47,7 @@ class UnitManagement implements UnitExternalAPI {
             Pageable pageable = PageRequest.of(page, pageSize);
             stream = unitRepository.findAllByAccountId(accountId, pageable);
         } else {
-            stream = unitRepository.findBtAccountId(accountId);
+            stream = unitRepository.findByAccountId(accountId);
         }
 
         return stream.map(unitMapper::map)

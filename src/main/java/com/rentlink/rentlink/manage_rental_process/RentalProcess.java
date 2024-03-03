@@ -79,6 +79,11 @@ class RentalProcess {
         return this;
     }
 
+    RentalProcess withAccountId(UUID accountId) {
+        this.accountId = accountId;
+        return this;
+    }
+
     UUID previousStep() {
         return definition.steps().stream()
                 .filter(processStepDTO -> processStepDTO.inputs().stream()

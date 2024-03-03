@@ -34,26 +34,51 @@ class TenantManagement implements TenantExternalAPI {
     }
 
     @Override
-    public Set<TenantDTO> searchTenants(Integer page, Integer pageSize, UUID accountId, SearchTenant searchTenant) {
+    public Set<TenantDTO> quickSearch(UUID accountId, String value) {
+        Specification<Tenant> specification = Specification.where(null);
+        specification = specification.and(
+                TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.ACCOUNT_ID, accountId.toString()));
+
+        if (value != null) {
+            specification =
+                    specification.or(TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.NAME, value));
+
+            specification =
+                    specification.or(TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.SURNAME, value));
+
+            specification =
+                    specification.or(TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.PHONE, value));
+
+            specification =
+                    specification.or(TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.EMAIL, value));
+        }
+
+        return tenantRepository.findAll(specification).stream()
+                .map(tenantMapper::map)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<TenantDTO> search(Integer page, Integer pageSize, UUID accountId, SearchTenant searchTenant) {
         Pageable pageable = PageRequest.of(page, pageSize);
         Specification<Tenant> specification = Specification.where(null);
         specification = specification.and(
                 TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.ACCOUNT_ID, accountId.toString()));
 
         if (searchTenant.name() != null) {
-            specification = specification.or(
+            specification = specification.and(
                     TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.NAME, searchTenant.name()));
         }
         if (searchTenant.name() != null) {
-            specification = specification.or(
+            specification = specification.and(
                     TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.SURNAME, searchTenant.surname()));
         }
         if (searchTenant.phone() != null) {
-            specification = specification.or(
+            specification = specification.and(
                     TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.PHONE, searchTenant.phone()));
         }
         if (searchTenant.email() != null) {
-            specification = specification.or(
+            specification = specification.and(
                     TenantSpecification.nameLike(TenantSpecification.TestSpecKeys.EMAIL, searchTenant.email()));
         }
 

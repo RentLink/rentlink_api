@@ -13,7 +13,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
 
     @Query(
             value =
-                    "UPDATE Notification SET received = true WHERE id IN :ids AND received = false AND account_id = :accountId")
+                    "UPDATE Notification SET received = true WHERE id IN :ids AND received = false AND accountId = :accountId")
     @Modifying
     int markAsReceived(UUID accountId, Set<UUID> ids);
 }

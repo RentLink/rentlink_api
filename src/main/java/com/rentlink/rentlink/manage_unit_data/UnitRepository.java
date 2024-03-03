@@ -14,5 +14,5 @@ interface UnitRepository extends JpaRepository<Unit, UUID> {
 
     Stream<Unit> findAllByAccountId(UUID accountId, Pageable pageable);
 
-    Stream<Unit> findBtAccountId(UUID accountId);
+    Stream<Unit> findByAccountId(UUID accountId);
 }

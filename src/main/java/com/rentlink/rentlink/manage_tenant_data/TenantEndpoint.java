@@ -34,10 +34,15 @@ class TenantEndpoint {
         return tenantExternalAPI.getTenants(accountId);
     }
 
-    @GetMapping(value = "")
+    @GetMapping(value = "/quick-search")
+    Set<TenantDTO> quickTenants(@RequestHeader(value = X_USER_HEADER) UUID accountId, String value) {
+        return tenantExternalAPI.quickSearch(accountId, value);
+    }
+
+    @GetMapping(value = "/search")
     Set<TenantDTO> searchTenants(
             @RequestHeader(value = X_USER_HEADER) UUID accountId, int page, int size, SearchTenant searchTenant) {
-        return tenantExternalAPI.searchTenants(page - 1, size, accountId, searchTenant);
+        return tenantExternalAPI.search(page - 1, size, accountId, searchTenant);
     }
 
     @PostMapping("/")

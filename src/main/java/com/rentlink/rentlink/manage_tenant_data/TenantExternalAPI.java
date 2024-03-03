@@ -9,7 +9,9 @@ interface TenantExternalAPI {
 
     Set<TenantDTO> getTenants(UUID accountId);
 
-    Set<TenantDTO> searchTenants(Integer page, Integer pageSize, UUID accountId, SearchTenant searchTenant);
+    Set<TenantDTO> quickSearch(UUID accountId, String value);
+
+    Set<TenantDTO> search(Integer page, Integer pageSize, UUID accountId, SearchTenant searchTenant);
 
     TenantDTO addTenant(TenantDTO tenantDTO, UUID accountId);
 
