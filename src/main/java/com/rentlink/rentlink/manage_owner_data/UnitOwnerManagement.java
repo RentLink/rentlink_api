@@ -18,7 +18,6 @@ class UnitOwnerManagement implements UnitOwnerExternalAPI {
     private final UnitOwnerMapper unitOwnerMapper;
 
     @Transactional(readOnly = true)
-
     @Override
     public UnitOwnerDTO getUnitOwner(UUID ownerId, UUID accountId) {
         return unitOwnerRepository
@@ -28,7 +27,6 @@ class UnitOwnerManagement implements UnitOwnerExternalAPI {
     }
 
     @Transactional(readOnly = true)
-
     @Override
     public Set<UnitOwnerDTO> getUnitOwners(UUID accountId, Integer page, Integer pageSize) {
         Stream<UnitOwner> stream;

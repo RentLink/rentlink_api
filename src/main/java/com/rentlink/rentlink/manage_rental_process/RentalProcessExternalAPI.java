@@ -7,7 +7,9 @@ interface RentalProcessExternalAPI {
 
     RentalProcessDTO createRentalProcess(UUID accountId, RentalProcessDTO rentalProcessDTO);
 
-    List<RentalProcessDTO> getRentalProcessesForOption(UUID rentalProcessId, UUID accountId);
+    List<RentalProcessDTO> getRentalProcessesForOption(UUID rentalOptionId, UUID accountId);
+
+    RentalProcessDTO getRentalProcesses(UUID rentalProcessId, UUID accountId);
 
     RentalProcessDTO updateRentalProcess(UUID rentalProcessId, UUID accountId, RentalProcessDTO rentalProcessDTO);
 

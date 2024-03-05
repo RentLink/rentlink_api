@@ -27,7 +27,6 @@ class TenantManagement implements TenantExternalAPI {
                 .orElseThrow(TenantNotFoundException::new);
     }
 
-
     @Transactional(readOnly = true)
     @Override
     public Set<TenantDTO> getTenants(UUID accountId) {
