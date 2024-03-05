@@ -31,6 +31,12 @@ class RentalProcessEndpoint {
         return processExternalAPI.getRentalProcessesForOption(rentalOptionId, accountId);
     }
 
+    @GetMapping("/{rentalProcessId}")
+    RentalProcessDTO getRentalProcess(
+            @RequestHeader(value = X_USER_HEADER) UUID accountId, @PathVariable UUID rentalProcessId) {
+        return processExternalAPI.getRentalProcesses(rentalProcessId, accountId);
+    }
+
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     RentalProcessDTO createRentalProcess(

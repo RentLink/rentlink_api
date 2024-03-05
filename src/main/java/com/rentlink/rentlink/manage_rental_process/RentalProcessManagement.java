@@ -53,6 +53,14 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public RentalProcessDTO getRentalProcesses(UUID rentalProcessId, UUID accountId) {
+        return rentalProcessRepository
+                .findByAccountIdAndId(accountId, rentalProcessId)
+                .map(rentalProcessMapper::map)
+                .orElseThrow(RuntimeException::new);
+    }
 
     @Transactional
     @Override
