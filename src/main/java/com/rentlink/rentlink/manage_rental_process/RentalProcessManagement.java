@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 // TODO: Exception handling
 // TODO: Throws RuntimeException
@@ -25,6 +26,7 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
 
     private final EmailOrderInternalAPI emailOrderInternalAPI;
 
+    @Transactional
     @Override
     public RentalProcessDTO createRentalProcess(UUID accountId, RentalProcessDTO rentalProcessDTO) {
         if (processDefinitionManagement.getDefinitions(accountId).stream()
@@ -42,6 +44,7 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
         return result.withPreviousStepId(saved.previousStep());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<RentalProcessDTO> getRentalProcessesForOption(UUID uuid, UUID accountId) {
         return rentalProcessRepository
@@ -50,6 +53,8 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
                 .collect(Collectors.toList());
     }
 
+
+    @Transactional
     @Override
     public RentalProcessDTO updateRentalProcess(
             UUID rentalProcessId, UUID accountId, RentalProcessDTO rentalProcessDTO) {
@@ -83,6 +88,7 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
         return result.withPreviousStepId(saved.previousStep());
     }
 
+    @Transactional
     @Override
     public RentalProcessDTO rejectRentalProcess(UUID rentalProcessId, UUID accountId) {
         RentalProcess rentalProcess = rentalProcessRepository
@@ -92,6 +98,7 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
         return rentalProcessMapper.map(rentalProcessRepository.save(rentalProcess));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<InternalRentalProcessDTO> findRentalProcessesUpdatedBefore(Instant instant) {
         return rentalProcessRepository.findAllByUpdatedAtBefore(instant).stream()

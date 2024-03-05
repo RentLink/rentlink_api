@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,8 @@ class UnitOwnerManagement implements UnitOwnerExternalAPI {
     private final UnitOwnerRepository unitOwnerRepository;
     private final UnitOwnerMapper unitOwnerMapper;
 
+    @Transactional(readOnly = true)
+
     @Override
     public UnitOwnerDTO getUnitOwner(UUID ownerId, UUID accountId) {
         return unitOwnerRepository
@@ -23,6 +26,8 @@ class UnitOwnerManagement implements UnitOwnerExternalAPI {
                 .map(unitOwnerMapper::map)
                 .orElseThrow(UnitOwnerNotFoundException::new);
     }
+
+    @Transactional(readOnly = true)
 
     @Override
     public Set<UnitOwnerDTO> getUnitOwners(UUID accountId, Integer page, Integer pageSize) {
@@ -37,6 +42,7 @@ class UnitOwnerManagement implements UnitOwnerExternalAPI {
         return stream.map(unitOwnerMapper::map).collect(Collectors.toSet());
     }
 
+    @Transactional
     @Override
     public UnitOwnerDTO addUnitOwner(UUID accountId, UnitOwnerDTO unitOwnerDTO) {
         UnitOwner unitOwner = unitOwnerMapper.map(unitOwnerDTO);
@@ -44,6 +50,7 @@ class UnitOwnerManagement implements UnitOwnerExternalAPI {
         return unitOwnerMapper.map(unitOwnerRepository.save(unitOwner));
     }
 
+    @Transactional
     @Override
     public UnitOwnerDTO patchUnitOwner(UUID id, UUID accountId, UnitOwnerDTO unitOwnerDTO) {
         UnitOwner unitOwner =
@@ -52,6 +59,7 @@ class UnitOwnerManagement implements UnitOwnerExternalAPI {
         return unitOwnerMapper.map(unitOwnerRepository.save(unitOwner));
     }
 
+    @Transactional
     @Override
     public void deleteUnitOwner(UUID ownerId, UUID accountId) {
         unitOwnerRepository.deleteByAccountIdAndId(accountId, ownerId);

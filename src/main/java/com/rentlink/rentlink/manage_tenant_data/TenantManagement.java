@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -17,6 +18,7 @@ class TenantManagement implements TenantExternalAPI {
     private final TenantRepository tenantRepository;
     private final TenantMapper tenantMapper;
 
+    @Transactional(readOnly = true)
     @Override
     public TenantDTO getTenant(UUID tenantId, UUID accountId) {
         return tenantRepository
@@ -25,6 +27,8 @@ class TenantManagement implements TenantExternalAPI {
                 .orElseThrow(TenantNotFoundException::new);
     }
 
+
+    @Transactional(readOnly = true)
     @Override
     public Set<TenantDTO> getTenants(UUID accountId) {
         return tenantRepository
@@ -33,6 +37,7 @@ class TenantManagement implements TenantExternalAPI {
                 .collect(Collectors.toSet());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Set<TenantDTO> quickSearch(UUID accountId, String value) {
         Specification<Tenant> specification = Specification.where(null);
@@ -58,6 +63,7 @@ class TenantManagement implements TenantExternalAPI {
                 .collect(Collectors.toSet());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Set<TenantDTO> search(Integer page, Integer pageSize, UUID accountId, SearchTenant searchTenant) {
         Pageable pageable = PageRequest.of(page, pageSize);
@@ -89,6 +95,7 @@ class TenantManagement implements TenantExternalAPI {
                 .collect(Collectors.toSet());
     }
 
+    @Transactional
     @Override
     public TenantDTO addTenant(TenantDTO tenantDTO, UUID accountId) {
         Tenant tenant = tenantMapper.map(tenantDTO);
@@ -96,6 +103,7 @@ class TenantManagement implements TenantExternalAPI {
         return tenantMapper.map(tenantRepository.save(tenant));
     }
 
+    @Transactional
     @Override
     public TenantDTO patchTenant(UUID id, UUID accountId, TenantDTO tenantDTO) {
         Tenant tenant =
@@ -104,6 +112,7 @@ class TenantManagement implements TenantExternalAPI {
         return tenantMapper.map(tenantRepository.save(tenant));
     }
 
+    @Transactional
     @Override
     public void deleteTenant(UUID ownerId, UUID accountId) {
         tenantRepository.deleteByAccountIdAndId(accountId, ownerId);
