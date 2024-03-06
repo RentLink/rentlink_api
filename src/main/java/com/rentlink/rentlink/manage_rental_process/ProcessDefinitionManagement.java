@@ -73,7 +73,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                         .collect(Collectors.toSet()),
                 null);
         return new ProcessStepDTO(
-                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab2"),
+                UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab4"),
                 "Przesłanie dokumentów",
                 3,
                 ProcessStepType.SEND_DOCS,

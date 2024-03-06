@@ -35,7 +35,7 @@ record ProcessDataInputDTO<T>(
             int order,
             Set<ProcessDataInputSelectValueDTO> values,
             List<String> value) {
-        return new ProcessDataInputDTO<>(label, ProcessDataInputType.SELECT, isOptional, order, value, values);
+        return new ProcessDataInputDTO<>(label, ProcessDataInputType.MULTISELECT, isOptional, order, value, values);
     }
 
     @Override
