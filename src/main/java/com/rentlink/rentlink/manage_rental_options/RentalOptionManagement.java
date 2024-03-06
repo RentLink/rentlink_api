@@ -38,6 +38,7 @@ public class RentalOptionManagement implements RentalOptionInternalAPI {
         } else {
             RentalOption rentalOption = rentalOptionMapper.map(rentalOptionDTO);
             rentalOption.setUnitId(unitId);
+            rentalOption.setAccountId(accountId);
             RentalOption saved = rentalOptionRepository.save(rentalOption);
             return rentalOptionMapper.map(saved);
         }
