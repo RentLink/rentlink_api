@@ -30,7 +30,7 @@ public class FilesManagement implements FilesManagerInternalAPI {
 
     @Override
     public void saveFiles(Set<FileToSave> files) {
-        files.stream().filter(Objects::nonNull).forEach(file -> saveFile(file, rootFilesDir));
+        files.stream().filter(Objects::nonNull).forEach(file -> saveFile(file, rootFilesDir + file.subdirectory()));
     }
 
     @Override

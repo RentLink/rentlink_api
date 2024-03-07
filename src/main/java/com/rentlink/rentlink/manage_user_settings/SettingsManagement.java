@@ -5,6 +5,7 @@ import com.rentlink.rentlink.manage_files.FileToSave;
 import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,14 +18,22 @@ public class SettingsManagement implements SettingsExternalAPI {
     private final FilesManagerInternalAPI filesManagerInternalAPI;
 
     @Override
-    public void uploadFiles(Set<MultipartFile> multipartFiles) {
+    public void uploadFiles(Set<MultipartFile> multipartFiles, UUID accountId) {
         filesManagerInternalAPI.saveFiles(
-                multipartFiles.stream().map(mp -> new FileToSave("default", mp)).collect(Collectors.toSet()));
+                multipartFiles.stream().map(mp -> new FileToSave(accountId.toString(), mp)).collect(Collectors.toSet()));
     }
 
     @Override
-    public List<String> listFiles() {
-        return filesManagerInternalAPI.getFileNames("default").stream()
+    public SettingsDTO getSettings(UUID accountId) {
+        List<String> files = filesManagerInternalAPI.getFileNames(accountId.toString()).stream()
+                .map(FileName::name)
+                .collect(Collectors.toList());
+        return new SettingsDTO(files);
+    }
+
+    @Override
+    public List<String> listFiles(UUID accountId) {
+        return filesManagerInternalAPI.getFileNames(accountId.toString()).stream()
                 .map(FileName::name)
                 .collect(Collectors.toList());
     }

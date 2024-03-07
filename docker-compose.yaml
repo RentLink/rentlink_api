@@ -52,7 +52,7 @@ services:
       PORT: 8081
       DATABASE_URL: "jdbc:postgresql://database:5432/rentlink"
       MAIL_USERNAME: "support@rentlink.io"
-      MAIL_PASSWORD: /run/secrets/rentlink_smtp_password
+      MAIL_PASSWORD: "gagrod-1civry-sutrUv"
     secrets:
       - rentlink_smtp_password
 
@@ -120,4 +120,4 @@ networks:
 
 secrets:
   rentlink_smtp_password:
-    file: ./smtp_password
+    file: smtp_password.txt
