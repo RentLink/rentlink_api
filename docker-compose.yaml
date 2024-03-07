@@ -120,4 +120,4 @@ networks:
 
 secrets:
   rentlink_smtp_password:
-    file: smtp_password.txt
+    file: smtp_password
