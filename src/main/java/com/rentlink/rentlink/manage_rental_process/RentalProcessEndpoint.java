@@ -2,6 +2,7 @@ package com.rentlink.rentlink.manage_rental_process;
 
 import static com.rentlink.rentlink.common.CustomHeaders.X_USER_HEADER;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,8 @@ class RentalProcessEndpoint {
     RentalProcessDTO updateRentalProcess(
             @RequestHeader(value = X_USER_HEADER) UUID accountId,
             @PathVariable UUID rentalProcessId,
-            @RequestBody RentalProcessDTO rentalProcessDTO) {
+            @RequestBody RentalProcessDTO rentalProcessDTO)
+            throws JsonProcessingException {
         return processExternalAPI.updateRentalProcess(rentalProcessId, accountId, rentalProcessDTO);
     }
 
