@@ -10,8 +10,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         componentModel = MappingConstants.ComponentModel.SPRING)
 interface EmailOrderMapper {
 
-    EmailOrderDTO map(EmailOrder emailOrder);
+    InternalEmailOrderDTO map(EmailOrder emailOrder);
 
     @Mapping(target = "id", ignore = true)
-    EmailOrder map(EmailOrderDTO emailOrder);
+    EmailOrder map(InternalEmailOrderDTO emailOrder);
 }

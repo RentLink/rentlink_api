@@ -1,9 +1,10 @@
 package com.rentlink.rentlink.manage_user_settings;
 
+import static com.rentlink.rentlink.common.CustomHeaders.X_USER_HEADER;
+
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.rentlink.rentlink.common.CustomHeaders.X_USER_HEADER;
-
 @RestController
 @RequestMapping("/api/settings")
 @RequiredArgsConstructor
@@ -29,7 +28,8 @@ public class SettingsEndpoint {
             value = "/upload-documents",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> uploadFile(@RequestHeader(value = X_USER_HEADER) UUID accountId, @RequestPart(value = "files") MultipartFile[] files) {
+    public ResponseEntity<String> uploadFile(
+            @RequestHeader(value = X_USER_HEADER) UUID accountId, @RequestPart(value = "files") MultipartFile[] files) {
         settingsExternalAPI.uploadFiles(Set.of(files), accountId);
         return new ResponseEntity<>("success", HttpStatus.OK);
     }

@@ -19,8 +19,9 @@ public class SettingsManagement implements SettingsExternalAPI {
 
     @Override
     public void uploadFiles(Set<MultipartFile> multipartFiles, UUID accountId) {
-        filesManagerInternalAPI.saveFiles(
-                multipartFiles.stream().map(mp -> new FileToSave(accountId.toString(), mp)).collect(Collectors.toSet()));
+        filesManagerInternalAPI.saveFiles(multipartFiles.stream()
+                .map(mp -> new FileToSave(accountId.toString(), mp))
+                .collect(Collectors.toSet()));
     }
 
     @Override
