@@ -4,6 +4,7 @@ import com.rentlink.rentlink.manage_files.FileDTO;
 import com.rentlink.rentlink.manage_files.FileName;
 import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -53,34 +54,41 @@ class EmailOrderManagement implements EmailOrderInternalAPI {
         emailOrderRepository.save(emailOrder);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<InternalEmailOrderDTO> getFailedEmails() {
+        return emailOrderRepository
+                .findAllByStatus(EmailOrderStatus.FAILED)
+                .map(emailOrderMapper::map)
+                .collect(Collectors.toList());
+    }
+
     @Override
     @Transactional
     public void resendFailedEmail(InternalEmailOrderDTO internalEmailOrderDTO) {
-        EmailOrder emailOrder =
-
-
-        emailOrderRepository.findAllByStatus(EmailOrderStatus.FAILED).forEach(emailOrder -> {
-            InternalEmailOrderDTO emailOrderDTO = emailOrderMapper.map(emailOrder);
-            var files = filesManagerInternalAPI
-                    .getFiles(
-                            emailOrder.getAccountId().toString(),
-                            emailOrderDTO.files().stream().map(FileName::new).collect(Collectors.toSet()))
-                    .stream()
-                    .map(FileDTO::file)
-                    .collect(Collectors.toList());
-            var emailSendTrial = emailSender.executeEmailSend(emailOrderDTO, files);
-            if (emailSendTrial.isSuccess()) {
-                emailOrder.setStatus(EmailOrderStatus.SENT);
-                emailOrder.setSentAt(LocalDateTime.now());
-                emailOrder.setErrorMessage(null);
-                emailOrderRepository.save(emailOrder);
-            } else {
-                log.error(
-                        "Failed to send email order, updating error in database, we will retry later",
-                        emailSendTrial.getCause());
-                emailOrder.setErrorMessage(emailSendTrial.getCause().getMessage());
-                emailOrderRepository.save(emailOrder);
-            }
-        });
+        EmailOrder emailOrder = emailOrderRepository
+                .findByAccountIdAndId(internalEmailOrderDTO.accountId(), internalEmailOrderDTO.id())
+                .orElseThrow(RuntimeException::new);
+        InternalEmailOrderDTO emailOrderDTO = emailOrderMapper.map(emailOrder);
+        var files = filesManagerInternalAPI
+                .getFiles(
+                        emailOrder.getAccountId().toString(),
+                        emailOrderDTO.files().stream().map(FileName::new).collect(Collectors.toSet()))
+                .stream()
+                .map(FileDTO::file)
+                .collect(Collectors.toList());
+        var emailSendTrial = emailSender.executeEmailSend(emailOrderDTO, files);
+        if (emailSendTrial.isSuccess()) {
+            emailOrder.setStatus(EmailOrderStatus.SENT);
+            emailOrder.setSentAt(LocalDateTime.now());
+            emailOrder.setErrorMessage(null);
+            emailOrderRepository.save(emailOrder);
+        } else {
+            log.error(
+                    "Failed to send email order, updating error in database, we will retry later",
+                    emailSendTrial.getCause());
+            emailOrder.setErrorMessage(emailSendTrial.getCause().getMessage());
+            emailOrderRepository.save(emailOrder);
+        }
     }
 }

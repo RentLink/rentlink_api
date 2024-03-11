@@ -107,13 +107,4 @@ class RentalProcess {
     Boolean isProcessCompleted() {
         return status == RentalProcessStatus.COMPLETED;
     }
-
-    Boolean isLastStepOfType(ProcessStepType type) {
-        return definition.steps().stream()
-                .filter(processStepDTO -> processStepDTO.type().equals(type))
-                .map(ProcessStepDTO::stepId)
-                .max(Comparator.comparing(UUID::compareTo))
-                .orElseThrow(RuntimeException::new)
-                .equals(currentStepId);
-    }
 }

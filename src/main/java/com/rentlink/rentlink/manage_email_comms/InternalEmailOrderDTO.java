@@ -3,10 +3,13 @@ package com.rentlink.rentlink.manage_email_comms;
 import java.util.List;
 import java.util.UUID;
 
-public record InternalEmailOrderDTO(UUID accountId, String email, String subject, String message, List<String> files) {
+public record InternalEmailOrderDTO(
+        UUID id, UUID accountId, String email, String subject, String message, List<String> files) {
 
-    public static InternalEmailOrderDTO orderForSendingDocumentsInRentalProcess(UUID accountId, String email, List<String> files) {
+    public static InternalEmailOrderDTO orderForSendingDocumentsInRentalProcess(
+            UUID accountId, String email, List<String> files) {
         return new InternalEmailOrderDTO(
+                null,
                 accountId,
                 email,
                 "Documents for rental process",

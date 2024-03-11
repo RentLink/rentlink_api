@@ -12,6 +12,6 @@ public class EmailScheduledJob {
 
     @Scheduled(cron = "0 */15 * ? * *")
     public void sendEmails() {
-        emailOrderManagement.resendFailedEmails();
+        emailOrderManagement.getFailedEmails().forEach(emailOrderManagement::resendFailedEmail);
     }
 }

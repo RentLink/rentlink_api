@@ -9,5 +9,5 @@ public interface EmailOrderInternalAPI {
 
     void resendFailedEmail(InternalEmailOrderDTO internalEmailOrderDTO);
 
-    List<Inter> getFailedEmails();
+    List<InternalEmailOrderDTO> getFailedEmails();
 }

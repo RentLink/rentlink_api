@@ -2,13 +2,12 @@ package com.rentlink.rentlink.manage_rental_process;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rentlink.rentlink.manage_email_comms.InternalEmailOrderDTO;
 import com.rentlink.rentlink.manage_email_comms.EmailOrderInternalAPI;
+import com.rentlink.rentlink.manage_email_comms.InternalEmailOrderDTO;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,7 +102,7 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
 
             emailOrderInternalAPI.acceptEmailSendOrder(
                     rentalProcess.getAccountId(),
-                    InternalEmailOrderDTO.orderForSendingDocumentsInRentalProcess(email, documentList));
+                    InternalEmailOrderDTO.orderForSendingDocumentsInRentalProcess(accountId, email, documentList));
         }
         RentalProcessDTO result = rentalProcessMapper.map(rentalProcess);
         return result.withPreviousStepId(lastFilledStep.stepId());
