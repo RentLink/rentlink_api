@@ -18,7 +18,7 @@ class EmailSender {
 
     private final JavaMailSender mailSender;
 
-    public Try<Void> executeEmailSend(EmailOrderDTO emailOrderDTO, List<File> attachments) {
+    public Try<Void> executeEmailSend(InternalEmailOrderDTO emailOrderDTO, List<File> attachments) {
         return Try.run(() -> {
                     MimeMessage message = mailSender.createMimeMessage();
                     MimeMessageHelper helper = new MimeMessageHelper(message, true);

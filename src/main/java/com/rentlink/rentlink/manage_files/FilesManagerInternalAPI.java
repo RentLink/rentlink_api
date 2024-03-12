@@ -9,7 +9,10 @@ public interface FilesManagerInternalAPI {
 
     void saveFiles(Set<FileToSave> files);
 
-    List<FileName> getFileNames(String subdirectory);
+    List<FileMetadata> getFileNames(String subdirectory);
 
-    List<FileDTO> getFiles(String subdirectory, Set<FileName> fileNames);
+    List<FileDTO> getFiles(String subdirectory, Set<String> fileMetadata);
+
+    void deleteFiles(String subdirectory, Set<String> fileMetadata);
+
 }

@@ -3,11 +3,13 @@ package com.rentlink.rentlink.manage_rental_process;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentlink.rentlink.manage_email_comms.EmailOrderInternalAPI;
+import com.rentlink.rentlink.manage_email_comms.InternalEmailOrderDTO;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 // TODO: Throws RuntimeException
 @Service
 @RequiredArgsConstructor
+@Slf4j
 class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcessInternalAPI {
 
     private final RentalProcessRepository rentalProcessRepository;
@@ -44,7 +47,7 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
                 .calculateStatus();
         RentalProcess saved = rentalProcessRepository.save(rentalProcess);
         RentalProcessDTO result = rentalProcessMapper.map(saved);
-        return result.withPreviousStepId(saved.previousStep());
+        return result.withPreviousStepId(saved.lastFilledStep().stepId());
     }
 
     @Transactional(readOnly = true)
@@ -61,8 +64,9 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
     public RentalProcessDTO getRentalProcesses(UUID rentalProcessId, UUID accountId) {
         return rentalProcessRepository
                 .findByAccountIdAndId(accountId, rentalProcessId)
-                .map(rentalProcess ->
-                        rentalProcessMapper.map(rentalProcess).withPreviousStepId(rentalProcess.previousStep()))
+                .map(rentalProcess -> rentalProcessMapper
+                        .map(rentalProcess)
+                        .withPreviousStepId(rentalProcess.lastFilledStep().stepId()))
                 .orElseThrow(RuntimeException::new);
     }
 
@@ -77,10 +81,10 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
         RentalProcess rentalProcess = rentalProcessRepository
                 .findByAccountIdAndId(accountId, rentalProcessId)
                 .orElseThrow(RuntimeException::new);
-        if (rentalProcess.getStatus() == RentalProcessStatus.REJECTED) {
+        if (rentalProcess.isProcessRejected()) {
             throw new RuntimeException("Process is rejected");
         }
-        if (rentalProcess.getStatus() == RentalProcessStatus.COMPLETED) {
+        if (rentalProcess.isProcessCompleted()) {
             throw new RuntimeException("Process is finished");
         }
         rentalProcessMapper.update(rentalProcessDTO, rentalProcess);
@@ -90,17 +94,28 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
                 objectMapper.writeValueAsString(rentalProcess.getDefinition()),
                 rentalProcess.getCurrentStepId().toString(),
                 rentalProcess.getStatus().toString());
-        //        if (saved.currentStep().type().equals(ProcessStepType.SEND_DOCS)) {
-        //            var map = currentStep.inputs().stream()
-        //                    .collect(Collectors.toMap(ProcessDataInputDTO::label, ProcessDataInputDTO::value));
-        //            // TODO: change label names to enums
-        //            emailOrderInternalAPI.acceptEmailSendOrder(
-        //                    rentalProcess.getAccountId(),
-        //                    EmailOrderDTO.orderForSendingDocumentsInRentalProcess(
-        //                            (String) map.get("Email"), (List<String>) map.get("Lista dokumentów")));
-        //        }
+        ProcessStepDTO lastFilledStep = rentalProcess.lastFilledStep();
+        log.info("Last filled step: {} and type {}", lastFilledStep.stepId(), lastFilledStep.type());
+        if (lastFilledStep.type().equals(ProcessStepType.SEND_DOCS)) {
+            log.info("Sending email order to send documents");
+
+            var map = lastFilledStep.inputs().stream()
+                    .collect(Collectors.toMap(ProcessDataInputDTO::label, ProcessDataInputDTO::value));
+            // TODO: change label names to enums or add input alias
+            String email = (String) map.get("E-mail");
+            List<String> documentList = (List<String>) map.get("Lista dokumentów");
+            //            var map = lastFilledStep.inputs().stream()
+            //                    .collect(Collectors.toMap(ProcessDataInputDTO::identifier,
+            // ProcessDataInputDTO::value));
+            //            String email = (String) map.get(ProcessDataInputIdentifier.EMAIL);
+            //            List<String> documentList = (List<String>) map.get(ProcessDataInputIdentifier.DOC_LIST);
+            log.info("Email: {} and documents: {}", email, documentList);
+            emailOrderInternalAPI.acceptEmailSendOrder(
+                    rentalProcess.getAccountId(),
+                    InternalEmailOrderDTO.orderForSendingDocumentsInRentalProcess(accountId, email, documentList));
+        }
         RentalProcessDTO result = rentalProcessMapper.map(rentalProcess);
-        return result.withPreviousStepId(rentalProcess.previousStep());
+        return result.withPreviousStepId(lastFilledStep.stepId());
     }
 
     @Transactional

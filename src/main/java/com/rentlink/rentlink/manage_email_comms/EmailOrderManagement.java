@@ -1,8 +1,10 @@
 package com.rentlink.rentlink.manage_email_comms;
 
 import com.rentlink.rentlink.manage_files.FileDTO;
-import com.rentlink.rentlink.manage_files.FileName;
 import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -27,24 +29,65 @@ class EmailOrderManagement implements EmailOrderInternalAPI {
     @Override
     @Transactional
     @Async
-    public void acceptEmailSendOrder(UUID accountId, EmailOrderDTO emailOrderDTO) {
+    public void acceptEmailSendOrder(UUID accountId, InternalEmailOrderDTO emailOrderDTO) {
+        log.info("Received email order to send to {}", emailOrderDTO.email());
         var files =
-                filesManagerInternalAPI
-                        .getFiles(
-                                "",
-                                emailOrderDTO.files().stream()
-                                        .map(FileName::new)
-                                        .collect(Collectors.toSet()))
-                        .stream()
+                filesManagerInternalAPI.getFiles(accountId.toString(), new HashSet<>(emailOrderDTO.files())).stream()
                         .map(FileDTO::file)
                         .collect(Collectors.toList());
         // TODO: add retry logic
         var emailSendTrial = emailSender.executeEmailSend(emailOrderDTO, files);
-        if (emailSendTrial.isFailure()) {
-            log.info("Failed to send email order, saving it to database, we will retry later");
+        var emailOrder = emailOrderMapper.map(emailOrderDTO);
+        if (emailSendTrial.isSuccess()) {
+            log.info("Email order sent successfully to {} saving to db to send it later", emailOrderDTO.email());
+            emailOrder.setStatus(EmailOrderStatus.SENT);
+            emailOrder.setSentAt(LocalDateTime.now());
 
-            // TODO: add fatal handling
-            emailOrderRepository.save(emailOrderMapper.map(emailOrderDTO));
+        } else {
+            log.error(
+                    "Failed to send email order, saving it to database, we will retry later",
+                    emailSendTrial.getCause());
+            emailOrder.setStatus(EmailOrderStatus.FAILED);
+            emailOrder.setErrorMessage(emailSendTrial.getCause().getMessage());
+        }
+        // TODO: add fatal handling
+        emailOrderRepository.save(emailOrder);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<InternalEmailOrderDTO> getFailedEmails() {
+        return emailOrderRepository
+                .findAllByStatus(EmailOrderStatus.FAILED)
+                .map(emailOrderMapper::map)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void resendFailedEmail(InternalEmailOrderDTO internalEmailOrderDTO) {
+        EmailOrder emailOrder = emailOrderRepository
+                .findByAccountIdAndId(internalEmailOrderDTO.accountId(), internalEmailOrderDTO.id())
+                .orElseThrow(RuntimeException::new);
+        InternalEmailOrderDTO emailOrderDTO = emailOrderMapper.map(emailOrder);
+        var files =
+                filesManagerInternalAPI
+                        .getFiles(emailOrder.getAccountId().toString(), new HashSet<>(emailOrderDTO.files()))
+                        .stream()
+                        .map(FileDTO::file)
+                        .collect(Collectors.toList());
+        var emailSendTrial = emailSender.executeEmailSend(emailOrderDTO, files);
+        if (emailSendTrial.isSuccess()) {
+            emailOrder.setStatus(EmailOrderStatus.SENT);
+            emailOrder.setSentAt(LocalDateTime.now());
+            emailOrder.setErrorMessage(null);
+            emailOrderRepository.save(emailOrder);
+        } else {
+            log.error(
+                    "Failed to send email order, updating error in database, we will retry later",
+                    emailSendTrial.getCause());
+            emailOrder.setErrorMessage(emailSendTrial.getCause().getMessage());
+            emailOrderRepository.save(emailOrder);
         }
     }
 }

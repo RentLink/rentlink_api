@@ -41,8 +41,10 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
     }
 
     private ProcessStepDTO createInitialStep() {
-        ProcessDataInputDTO<String> nameStep = ProcessDataInputDTO.createLiteralProcessEntryValue("Nazwa", false, 1);
-        ProcessDataInputDTO<String> phoneStep = ProcessDataInputDTO.createLiteralProcessEntryValue("Telefon", false, 2);
+        ProcessDataInputDTO<String> nameStep =
+                ProcessDataInputDTO.createLiteralProcessEntryValue("Nazwa", ProcessDataInputIdentifier.NAME, false, 1);
+        ProcessDataInputDTO<String> phoneStep = ProcessDataInputDTO.createLiteralProcessEntryValue(
+                "Telefon", ProcessDataInputIdentifier.PHONE, false, 2);
         return new ProcessStepDTO(
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabf"),
                 "Wstępny kontakt",
@@ -52,8 +54,8 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
     }
 
     private ProcessStepDTO createMeetStep() {
-        ProcessDataInputDTO<LocalDate> name =
-                ProcessDataInputDTO.createDateProcessEntryValue("Data spotkania", false, 1, null);
+        ProcessDataInputDTO<LocalDate> name = ProcessDataInputDTO.createDateProcessEntryValue(
+                "Data spotkania", ProcessDataInputIdentifier.MEETING_DATE, false, 1, null);
         return new ProcessStepDTO(
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab2"),
                 "Pokazanie mieszkania",
@@ -63,9 +65,11 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
     }
 
     private ProcessStepDTO createSendDocsStep(UUID accountId) {
-        ProcessDataInputDTO<String> email = ProcessDataInputDTO.createLiteralProcessEntryValue("E-mail", false, 1);
+        ProcessDataInputDTO<String> email = ProcessDataInputDTO.createLiteralProcessEntryValue(
+                "E-mail", ProcessDataInputIdentifier.EMAIL, false, 1);
         ProcessDataInputDTO<List<String>> fileList = ProcessDataInputDTO.createMultiSelectValue(
                 "Lista dokumentów",
+                ProcessDataInputIdentifier.DOC_LIST,
                 false,
                 2,
                 filesManagerInternalAPI.getFileNames(accountId.toString()).stream()
@@ -92,6 +96,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
     private ProcessStepDTO createVerificationStep() {
         ProcessDataInputDTO<String> identityVerification = ProcessDataInputDTO.createSelectValue(
                 "Weryfikacja tożsamości",
+                ProcessDataInputIdentifier.IDENTITY_VERIFICATION,
                 false,
                 1,
                 Set.of(
@@ -100,6 +105,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                 null);
         ProcessDataInputDTO<String> incomeVerification = ProcessDataInputDTO.createSelectValue(
                 "Weryfikacja dochodu",
+                ProcessDataInputIdentifier.INCOME_VERIFICATION,
                 false,
                 2,
                 Set.of(
@@ -108,6 +114,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                 null);
         ProcessDataInputDTO<String> surveyVerification = ProcessDataInputDTO.createSelectValue(
                 "Weryfikacja ankiety",
+                ProcessDataInputIdentifier.SURVEY_VERIFICATION,
                 false,
                 3,
                 Set.of(

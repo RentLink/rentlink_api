@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 record ProcessDataInputDTO<T>(
         String label,
+        ProcessDataInputIdentifier identifier,
         ProcessDataInputType type,
         boolean isOptional,
         int order,
@@ -15,27 +16,35 @@ record ProcessDataInputDTO<T>(
         Set<ProcessDataInputSelectValueDTO> selectionValues) {
 
     public static ProcessDataInputDTO<String> createLiteralProcessEntryValue(
-            String label, boolean isOptional, int order) {
-        return new ProcessDataInputDTO<>(label, ProcessDataInputType.INPUT, isOptional, order, null, null);
+            String label, ProcessDataInputIdentifier identifier, boolean isOptional, int order) {
+        return new ProcessDataInputDTO<>(label, identifier, ProcessDataInputType.INPUT, isOptional, order, null, null);
     }
 
     public static ProcessDataInputDTO<LocalDate> createDateProcessEntryValue(
-            String label, boolean isOptional, int order, LocalDate value) {
-        return new ProcessDataInputDTO<>(label, ProcessDataInputType.DATE, isOptional, order, value, null);
+            String label, ProcessDataInputIdentifier identifier, boolean isOptional, int order, LocalDate value) {
+        return new ProcessDataInputDTO<>(label, identifier, ProcessDataInputType.DATE, isOptional, order, value, null);
     }
 
     public static ProcessDataInputDTO<String> createSelectValue(
-            String label, boolean isOptional, int order, Set<ProcessDataInputSelectValueDTO> values, String value) {
-        return new ProcessDataInputDTO<>(label, ProcessDataInputType.SELECT, isOptional, order, value, values);
+            String label,
+            ProcessDataInputIdentifier identifier,
+            boolean isOptional,
+            int order,
+            Set<ProcessDataInputSelectValueDTO> values,
+            String value) {
+        return new ProcessDataInputDTO<>(
+                label, identifier, ProcessDataInputType.SELECT, isOptional, order, value, values);
     }
 
     public static ProcessDataInputDTO<List<String>> createMultiSelectValue(
             String label,
+            ProcessDataInputIdentifier identifier,
             boolean isOptional,
             int order,
             Set<ProcessDataInputSelectValueDTO> values,
             List<String> value) {
-        return new ProcessDataInputDTO<>(label, ProcessDataInputType.MULTISELECT, isOptional, order, value, values);
+        return new ProcessDataInputDTO<>(
+                label, identifier, ProcessDataInputType.MULTISELECT, isOptional, order, value, values);
     }
 
     @Override

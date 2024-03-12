@@ -84,14 +84,15 @@ class RentalProcess {
         return this;
     }
 
-    UUID previousStep() {
+    ProcessStepDTO lastFilledStep() {
         return definition.steps().stream()
+                .filter(processStepDTO -> processStepDTO.inputs() != null
+                        && !processStepDTO.inputs().isEmpty())
                 .filter(processStepDTO -> processStepDTO.inputs().stream()
                         .filter(processDataInputDTO -> !processDataInputDTO.isOptional())
                         .allMatch(processDataInputDTO -> processDataInputDTO.value() != null))
                 .max(Comparator.comparing(ProcessStepDTO::order))
-                .orElseThrow(RuntimeException::new)
-                .stepId();
+                .orElseThrow(RuntimeException::new);
     }
 
     ProcessStepDTO currentStep() {
@@ -99,5 +100,13 @@ class RentalProcess {
                 .filter(processStepDTO -> processStepDTO.stepId().equals(currentStepId))
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
+    }
+
+    Boolean isProcessRejected() {
+        return status == RentalProcessStatus.REJECTED;
+    }
+
+    Boolean isProcessCompleted() {
+        return status == RentalProcessStatus.COMPLETED;
     }
 }
