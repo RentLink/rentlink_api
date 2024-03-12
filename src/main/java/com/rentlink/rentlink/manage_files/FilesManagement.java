@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,12 +35,12 @@ public class FilesManagement implements FilesManagerInternalAPI {
     }
 
     @Override
-    public List<FileName> getFileNames(String subdirectory) {
+    public List<FileMetadata> getFileNames(String subdirectory) {
         try (var stream = Files.list(Paths.get(rootFilesDir + subdirectory))) {
             return stream.filter(file -> !Files.isDirectory(file))
-                    .map(Path::getFileName)
-                    .map(Path::toString)
-                    .map(FileName::new)
+                    .map(path -> path.getFileName().toString())
+                    .map(fileName ->
+                            new FileMetadata(FilenameUtils.getBaseName(fileName), FilenameUtils.getExtension(fileName)))
                     .toList();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -47,20 +48,30 @@ public class FilesManagement implements FilesManagerInternalAPI {
     }
 
     @Override
-    public List<FileDTO> getFiles(String subdirectory, Set<FileName> fileNames) {
+    public List<FileDTO> getFiles(String subdirectory, Set<String> fileNames) {
         if (fileNames.isEmpty()) {
             return List.of();
         }
         try (var stream = Files.list(Paths.get(rootFilesDir + subdirectory))) {
-            var names = fileNames.stream().map(FileName::name).toList();
             return stream.filter(path -> !Files.isDirectory(path))
-                    .filter(path -> names.contains(path.getFileName().toString()))
+                    .filter(path -> fileNames.contains(path.getFileName().toString()))
                     .map(path -> new File(path.toUri()))
                     .map(file -> new FileDTO(file.getName(), file))
                     .toList();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void deleteFiles(String subdirectory, Set<String> fileMetadata) {
+        fileMetadata.forEach(fileName -> {
+            try {
+                Files.deleteIfExists(Paths.get(rootFilesDir + subdirectory).resolve(fileName));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private void saveFile(FileToSave file, String dir) {

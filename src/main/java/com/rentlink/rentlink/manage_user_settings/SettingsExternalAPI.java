@@ -9,6 +9,8 @@ public interface SettingsExternalAPI {
 
     void uploadFiles(Set<MultipartFile> multipartFiles, UUID accountId);
 
+    void deleteFiles(Set<String> fileNames, UUID accountId);
+
     SettingsDTO getSettings(UUID accountId);
 
     List<String> listFiles(UUID accountId);

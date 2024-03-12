@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,11 @@ public class SettingsEndpoint {
             @RequestHeader(value = X_USER_HEADER) UUID accountId, @RequestPart(value = "files") MultipartFile[] files) {
         settingsExternalAPI.uploadFiles(Set.of(files), accountId);
         return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/delete-document/{fileName}")
+    public void deleteFile(@RequestHeader(value = X_USER_HEADER) UUID accountId, @PathVariable String fileName) {
+        settingsExternalAPI.deleteFiles(Set.of(fileName), accountId);
     }
 
     @GetMapping

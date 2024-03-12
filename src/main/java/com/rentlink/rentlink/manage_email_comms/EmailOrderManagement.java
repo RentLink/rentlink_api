@@ -1,9 +1,9 @@
 package com.rentlink.rentlink.manage_email_comms;
 
 import com.rentlink.rentlink.manage_files.FileDTO;
-import com.rentlink.rentlink.manage_files.FileName;
 import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,13 +31,10 @@ class EmailOrderManagement implements EmailOrderInternalAPI {
     @Async
     public void acceptEmailSendOrder(UUID accountId, InternalEmailOrderDTO emailOrderDTO) {
         log.info("Received email order to send to {}", emailOrderDTO.email());
-        var files = filesManagerInternalAPI
-                .getFiles(
-                        accountId.toString(),
-                        emailOrderDTO.files().stream().map(FileName::new).collect(Collectors.toSet()))
-                .stream()
-                .map(FileDTO::file)
-                .collect(Collectors.toList());
+        var files =
+                filesManagerInternalAPI.getFiles(accountId.toString(), new HashSet<>(emailOrderDTO.files())).stream()
+                        .map(FileDTO::file)
+                        .collect(Collectors.toList());
         // TODO: add retry logic
         var emailSendTrial = emailSender.executeEmailSend(emailOrderDTO, files);
         var emailOrder = emailOrderMapper.map(emailOrderDTO);
@@ -73,13 +70,12 @@ class EmailOrderManagement implements EmailOrderInternalAPI {
                 .findByAccountIdAndId(internalEmailOrderDTO.accountId(), internalEmailOrderDTO.id())
                 .orElseThrow(RuntimeException::new);
         InternalEmailOrderDTO emailOrderDTO = emailOrderMapper.map(emailOrder);
-        var files = filesManagerInternalAPI
-                .getFiles(
-                        emailOrder.getAccountId().toString(),
-                        emailOrderDTO.files().stream().map(FileName::new).collect(Collectors.toSet()))
-                .stream()
-                .map(FileDTO::file)
-                .collect(Collectors.toList());
+        var files =
+                filesManagerInternalAPI
+                        .getFiles(emailOrder.getAccountId().toString(), new HashSet<>(emailOrderDTO.files()))
+                        .stream()
+                        .map(FileDTO::file)
+                        .collect(Collectors.toList());
         var emailSendTrial = emailSender.executeEmailSend(emailOrderDTO, files);
         if (emailSendTrial.isSuccess()) {
             emailOrder.setStatus(EmailOrderStatus.SENT);

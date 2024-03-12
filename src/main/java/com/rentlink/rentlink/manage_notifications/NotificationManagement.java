@@ -20,7 +20,7 @@ class NotificationManagement implements NotificationExternalAPI, NotificationInt
 
     private final NotificationMapper notificationMapper;
 
-    private final NotificationsWebSocketHandler webSocketHandler;
+//    private final NotificationsWebSocketHandler webSocketHandler;
 
     @Transactional(readOnly = true)
     @Override
@@ -47,7 +47,7 @@ class NotificationManagement implements NotificationExternalAPI, NotificationInt
         Notification notification = notificationMapper.map(notificationDTO);
         notification.setAccountId(accountId);
         notificationRepository.save(notification);
-        Try.run(() -> webSocketHandler.sendNotification(accountId, notificationDTO))
-                .onFailure(e -> log.info("Failed to send notification to web socket", e));
+//        Try.run(() -> webSocketHandler.sendNotification(accountId, notificationDTO))
+//                .onFailure(e -> log.info("Failed to send notification to web socket", e));
     }
 }

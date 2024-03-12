@@ -1,6 +1,6 @@
 package com.rentlink.rentlink.manage_user_settings;
 
-import com.rentlink.rentlink.manage_files.FileName;
+import com.rentlink.rentlink.manage_files.FileMetadata;
 import com.rentlink.rentlink.manage_files.FileToSave;
 import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
 import java.util.List;
@@ -25,9 +25,14 @@ public class SettingsManagement implements SettingsExternalAPI {
     }
 
     @Override
+    public void deleteFiles(Set<String> fileNames, UUID accountId) {
+        filesManagerInternalAPI.deleteFiles(accountId.toString(), fileNames);
+    }
+
+    @Override
     public SettingsDTO getSettings(UUID accountId) {
-        List<String> files = filesManagerInternalAPI.getFileNames(accountId.toString()).stream()
-                .map(FileName::name)
+        List<DocumentDTO> files = filesManagerInternalAPI.getFileNames(accountId.toString()).stream()
+                .map(DocumentDTO::fromFileMetadata)
                 .collect(Collectors.toList());
         return new SettingsDTO(files);
     }
@@ -35,7 +40,7 @@ public class SettingsManagement implements SettingsExternalAPI {
     @Override
     public List<String> listFiles(UUID accountId) {
         return filesManagerInternalAPI.getFileNames(accountId.toString()).stream()
-                .map(FileName::name)
+                .map(FileMetadata::name)
                 .collect(Collectors.toList());
     }
 }
