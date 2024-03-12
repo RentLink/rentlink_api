@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 // TODO: Throws RuntimeException
 @Service
 @RequiredArgsConstructor
+@Slf4j
 class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcessInternalAPI {
 
     private final RentalProcessRepository rentalProcessRepository;
@@ -93,13 +95,21 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
                 rentalProcess.getCurrentStepId().toString(),
                 rentalProcess.getStatus().toString());
         ProcessStepDTO lastFilledStep = rentalProcess.lastFilledStep();
+        log.info("Last filled step: {} and type {}", lastFilledStep.stepId(), lastFilledStep.type());
         if (lastFilledStep.type().equals(ProcessStepType.SEND_DOCS)) {
+            log.info("Sending email order to send documents");
+
             var map = lastFilledStep.inputs().stream()
                     .collect(Collectors.toMap(ProcessDataInputDTO::label, ProcessDataInputDTO::value));
             // TODO: change label names to enums or add input alias
-            String email = (String) map.get("Email");
+            String email = (String) map.get("E-mail");
             List<String> documentList = (List<String>) map.get("Lista dokumentów");
-
+            //            var map = lastFilledStep.inputs().stream()
+            //                    .collect(Collectors.toMap(ProcessDataInputDTO::identifier,
+            // ProcessDataInputDTO::value));
+            //            String email = (String) map.get(ProcessDataInputIdentifier.EMAIL);
+            //            List<String> documentList = (List<String>) map.get(ProcessDataInputIdentifier.DOC_LIST);
+            log.info("Email: {} and documents: {}", email, documentList);
             emailOrderInternalAPI.acceptEmailSendOrder(
                     rentalProcess.getAccountId(),
                     InternalEmailOrderDTO.orderForSendingDocumentsInRentalProcess(accountId, email, documentList));

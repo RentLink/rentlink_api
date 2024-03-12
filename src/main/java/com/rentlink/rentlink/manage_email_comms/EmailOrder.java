@@ -45,7 +45,7 @@ class EmailOrder {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(name = "send_at")
+    @Column(name = "sent_at")
     private LocalDateTime sentAt;
 
     @Column(name = "error_message")

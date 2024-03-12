@@ -157,7 +157,8 @@ CREATE TABLE IF NOT EXISTS email_order_outbox
     files JSONB,
     created_at timestamp,
     sent_at timestamp,
-    status varchar(20)
+    status varchar(20),
+    error_message text
 );
 
 

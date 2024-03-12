@@ -69,6 +69,4 @@ public class NotificationsWebSocketHandler extends AbstractWebSocketHandler {
         log.info("Session closed: {}", session.getId());
         sessions.remove(accountId + session.getId());
     }
-
-
 }

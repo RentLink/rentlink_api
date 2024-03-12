@@ -86,6 +86,8 @@ class RentalProcess {
 
     ProcessStepDTO lastFilledStep() {
         return definition.steps().stream()
+                .filter(processStepDTO -> processStepDTO.inputs() != null
+                        && !processStepDTO.inputs().isEmpty())
                 .filter(processStepDTO -> processStepDTO.inputs().stream()
                         .filter(processDataInputDTO -> !processDataInputDTO.isOptional())
                         .allMatch(processDataInputDTO -> processDataInputDTO.value() != null))
