@@ -3,7 +3,7 @@
     preserve_host: true
     url: "http://rentlink:8081"
   match:
-    url: "http://localhost:8080/<**>"
+    url: "http://localhost:8080/api/<**>"
     methods:
       - GET
       - PUT
@@ -20,17 +20,14 @@
     - handler: json
       config:
         verbose: true
-- id: "api:protected2"
+- id: "ws:protected"
   upstream:
-    preserve_host: true
-    url: "http://rentlink:8081"
+    preserve_host: false
+    url: "http://rentlink:8081/"
   match:
-    url: "http://127.0.0.1:8080/<**>"
+    url: "http://localhost:8080/ws/notifications"
     methods:
       - GET
-      - PUT
-      - DELETE
-      - POST
   authenticators:
     - handler: cookie_session
   mutators:

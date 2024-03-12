@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.AbstractWebSocketMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,7 +16,7 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 @Component
 @Slf4j
-public class WebSocketHandler extends AbstractWebSocketHandler {
+public class NotificationsWebSocketHandler extends AbstractWebSocketHandler {
 
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
@@ -25,7 +24,7 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
 
     private final ObjectMapper objectMapper;
 
-    public WebSocketHandler(NotificationExternalAPI notificationExternalAPI, ObjectMapper objectMapper) {
+    public NotificationsWebSocketHandler(NotificationExternalAPI notificationExternalAPI, ObjectMapper objectMapper) {
         this.notificationExternalAPI = notificationExternalAPI;
         this.objectMapper = objectMapper;
     }
