@@ -53,6 +53,8 @@ public class NotificationsWebSocketHandler extends AbstractWebSocketHandler {
                     UUID accountId = UUID.fromString(id.split(":")[0]);
                     Set<UUID> notificationIds = Arrays.stream(
                                     message.getPayload().split(","))
+                            .filter(msg -> !msg.isEmpty())
+                            .filter(msg -> !msg.isBlank())
                             .map(UUID::fromString)
                             .collect(Collectors.toSet());
                     notificationInternalAPI.markAsReceived(accountId, notificationIds);
