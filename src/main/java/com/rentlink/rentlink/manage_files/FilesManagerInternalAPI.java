@@ -14,5 +14,4 @@ public interface FilesManagerInternalAPI {
     List<FileDTO> getFiles(String subdirectory, Set<String> fileMetadata);
 
     void deleteFiles(String subdirectory, Set<String> fileMetadata);
-
 }

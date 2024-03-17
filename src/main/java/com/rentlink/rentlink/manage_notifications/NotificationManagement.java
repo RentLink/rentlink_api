@@ -1,6 +1,5 @@
 package com.rentlink.rentlink.manage_notifications;
 
-import io.vavr.control.Try;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -14,13 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-class NotificationManagement implements NotificationExternalAPI, NotificationInternalAPI {
+class NotificationManagement implements NotificationInternalAPI {
 
     private final NotificationRepository notificationRepository;
 
     private final NotificationMapper notificationMapper;
-
-//    private final NotificationsWebSocketHandler webSocketHandler;
 
     @Transactional(readOnly = true)
     @Override
@@ -47,7 +44,5 @@ class NotificationManagement implements NotificationExternalAPI, NotificationInt
         Notification notification = notificationMapper.map(notificationDTO);
         notification.setAccountId(accountId);
         notificationRepository.save(notification);
-//        Try.run(() -> webSocketHandler.sendNotification(accountId, notificationDTO))
-//                .onFailure(e -> log.info("Failed to send notification to web socket", e));
     }
 }
