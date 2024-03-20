@@ -2,8 +2,9 @@ package com.rentlink.rentlink.manage_rental_process;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rentlink.rentlink.manage_email_comms.EmailOrderInternalAPI;
-import com.rentlink.rentlink.manage_email_comms.InternalEmailOrderDTO;
+import com.rentlink.rentlink.manage_email_inbound.AwaitingDocumentsInternalAPI;
+import com.rentlink.rentlink.manage_email_outbound.EmailOrderInternalAPI;
+import com.rentlink.rentlink.manage_email_outbound.InternalEmailOrderDTO;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,8 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
 
     private final EmailOrderInternalAPI emailOrderInternalAPI;
 
+    private final AwaitingDocumentsInternalAPI awaitingDocumentsInternalAPI;
+
     private final ObjectMapper objectMapper;
 
     @Transactional
@@ -55,7 +58,9 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
     public List<RentalProcessDTO> getRentalProcessesForOption(UUID uuid, UUID accountId) {
         return rentalProcessRepository
                 .findAllByRentalOptionIdAndAccountId(uuid, accountId)
-                .map(rentalProcessMapper::map)
+                .map(rentalProcess -> rentalProcessMapper
+                        .map(rentalProcess)
+                        .withPreviousStepId(rentalProcess.lastFilledStep().stepId()))
                 .collect(Collectors.toList());
     }
 
@@ -100,19 +105,17 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
             log.info("Sending email order to send documents");
 
             var map = lastFilledStep.inputs().stream()
-                    .collect(Collectors.toMap(ProcessDataInputDTO::label, ProcessDataInputDTO::value));
-            // TODO: change label names to enums or add input alias
-            String email = (String) map.get("E-mail");
-            List<String> documentList = (List<String>) map.get("Lista dokumentów");
-            //            var map = lastFilledStep.inputs().stream()
-            //                    .collect(Collectors.toMap(ProcessDataInputDTO::identifier,
-            // ProcessDataInputDTO::value));
-            //            String email = (String) map.get(ProcessDataInputIdentifier.EMAIL);
-            //            List<String> documentList = (List<String>) map.get(ProcessDataInputIdentifier.DOC_LIST);
-            log.info("Email: {} and documents: {}", email, documentList);
+                    .collect(Collectors.toMap(ProcessDataInputDTO::identifier, ProcessDataInputDTO::value));
+            String email = (String) map.get(ProcessDataInputIdentifier.EMAIL);
+            List<String> documentList = (List<String>) map.get(ProcessDataInputIdentifier.DOC_LIST);
+            UUID recognitionCode = UUID.randomUUID();
             emailOrderInternalAPI.acceptEmailSendOrder(
                     rentalProcess.getAccountId(),
-                    InternalEmailOrderDTO.orderForSendingDocumentsInRentalProcess(accountId, email, documentList));
+                    InternalEmailOrderDTO.orderForSendingDocumentsInRentalProcess(
+                            accountId, email, documentList, recognitionCode));
+
+            awaitingDocumentsInternalAPI.acceptAwaitingDocumentTask(
+                    accountId, rentalProcess.getId(), email, recognitionCode);
         }
         RentalProcessDTO result = rentalProcessMapper.map(rentalProcess);
         return result.withPreviousStepId(lastFilledStep.stepId());

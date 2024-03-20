@@ -1,4 +1,4 @@
-package com.rentlink.rentlink.manage_email_comms;
+package com.rentlink.rentlink.manage_email_outbound;
 
 import com.rentlink.rentlink.manage_files.FileDTO;
 import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
