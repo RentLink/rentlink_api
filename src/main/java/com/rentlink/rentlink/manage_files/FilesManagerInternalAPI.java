@@ -7,6 +7,8 @@ public interface FilesManagerInternalAPI {
 
     void saveImages(Set<FileToSave> files);
 
+    void saveMimeFiles(Set<MimebodyPartToSave> files);
+
     void saveFiles(Set<FileToSave> files);
 
     List<FileMetadata> getFileNames(String subdirectory);

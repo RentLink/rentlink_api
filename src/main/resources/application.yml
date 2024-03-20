@@ -39,7 +39,7 @@ rentlink:
     host: ssl0.ovh.net
     port: 993
     username: ${MAIL_USERNAME:support@rentlink.io}
-    password: ${MAIL_PASSWORD:changeit}
+    password: "gagrod-1civry-sutrUv"
   images:
     dir: "/opt/rentlink/images/"
   files:

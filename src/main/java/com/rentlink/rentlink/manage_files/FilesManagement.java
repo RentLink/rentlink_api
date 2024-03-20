@@ -1,6 +1,8 @@
 package com.rentlink.rentlink.manage_files;
 
+import jakarta.mail.MessagingException;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -32,6 +34,24 @@ public class FilesManagement implements FilesManagerInternalAPI {
     @Override
     public void saveFiles(Set<FileToSave> files) {
         files.stream().filter(Objects::nonNull).forEach(file -> saveFile(file, rootFilesDir));
+    }
+
+    @Override
+    public void saveMimeFiles(Set<MimebodyPartToSave> files) {
+        files.stream().filter(Objects::nonNull).forEach(file -> {
+            try {
+                Path destination = Paths.get(rootFilesDir + file.subdirectory())
+                        .resolve(Objects.requireNonNull(file.mimeBodyPart().getFileName()))
+                        .normalize()
+                        .toAbsolutePath();
+                Files.createDirectories(destination.getParent());
+                try (var outputStream = new FileOutputStream(destination.toFile())) {
+                    file.mimeBodyPart().writeTo(outputStream);
+                }
+            } catch (IOException | MessagingException e) {
+                throw new RuntimeException("Store exception", e);
+            }
+        });
     }
 
     @Override

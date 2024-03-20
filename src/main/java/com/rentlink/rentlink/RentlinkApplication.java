@@ -13,6 +13,4 @@ public class RentlinkApplication {
     public static void main(String[] args) {
         SpringApplication.run(RentlinkApplication.class, args);
     }
-
-
 }
