@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
@@ -46,23 +47,33 @@ public class NotificationsWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) {
-        sessions.forEach((id, s) -> {
-            try {
-                if (s.getId().endsWith(session.getId())) {
-                    UUID accountId = UUID.fromString(id.split(":")[0]);
-                    Set<UUID> notificationIds = Arrays.stream(
-                                    message.getPayload().split(","))
-                            .filter(msg -> !msg.isEmpty())
-                            .filter(msg -> !msg.isBlank())
-                            .map(UUID::fromString)
-                            .collect(Collectors.toSet());
-                    notificationInternalAPI.markAsReceived(accountId, notificationIds);
+    protected void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
+        super.handlePongMessage(session, message);
+    }
+
+    @Override
+    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+        String payload = message.getPayload().replace("\"", "");
+        log.info("Received message: {}", payload);
+        if (payload.equals("ping")) {
+            session.sendMessage(new TextMessage("pong"));
+        } else {
+            sessions.forEach((id, s) -> {
+                try {
+                    if (s.getId().endsWith(session.getId())) {
+                        UUID accountId = UUID.fromString(id.split(":")[0]);
+                        Set<UUID> notificationIds = Arrays.stream(payload.split(","))
+                                .filter(msg -> !msg.isEmpty())
+                                .filter(msg -> !msg.isBlank())
+                                .map(UUID::fromString)
+                                .collect(Collectors.toSet());
+                        notificationInternalAPI.markAsReceived(accountId, notificationIds);
+                    }
+                } catch (Exception e) {
+                    log.error("Error while handling text message", e);
                 }
-            } catch (Exception e) {
-                log.error("Error while handling text message", e);
-            }
-        });
+            });
+        }
     }
 
     @Override

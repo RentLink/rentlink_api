@@ -1,5 +1,6 @@
 package com.rentlink.rentlink.manage_user_settings;
 
+import com.rentlink.rentlink.common.DocumentDTO;
 import com.rentlink.rentlink.manage_files.FileMetadata;
 import com.rentlink.rentlink.manage_files.FileToSave;
 import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;

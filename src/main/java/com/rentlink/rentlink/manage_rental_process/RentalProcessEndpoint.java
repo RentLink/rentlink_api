@@ -31,7 +31,6 @@ class RentalProcessEndpoint {
     List<RentalProcessDTO> getRentalProcessesForOption(
             @RequestHeader(value = X_USER_HEADER) UUID accountId,
             @RequestParam(value = "rentalOptionId") UUID rentalOptionId) {
-        log.info("GET TIME: {}", System.currentTimeMillis());
         return processExternalAPI.getRentalProcessesForOption(rentalOptionId, accountId);
     }
 
@@ -54,7 +53,6 @@ class RentalProcessEndpoint {
             @PathVariable UUID rentalProcessId,
             @RequestBody RentalProcessDTO rentalProcessDTO)
             throws JsonProcessingException {
-        log.info("PUT TIME: {}", System.currentTimeMillis());
         return processExternalAPI.updateRentalProcess(rentalProcessId, accountId, rentalProcessDTO);
     }
 
@@ -62,5 +60,11 @@ class RentalProcessEndpoint {
     RentalProcessDTO rejectRentalProcess(
             @RequestHeader(value = X_USER_HEADER) UUID accountId, @PathVariable UUID rentalProcessId) {
         return processExternalAPI.rejectRentalProcess(rentalProcessId, accountId);
+    }
+
+    @GetMapping("/{rentalProcessId}/awaited-documents/")
+    AwaitingRentalProcessDocsDTO getAwaitedDocumentsForRentalProcess(
+            @RequestHeader(value = X_USER_HEADER) UUID accountId, @PathVariable UUID rentalProcessId) {
+        return processExternalAPI.getAwaitingRentalProcessDocs(rentalProcessId, accountId);
     }
 }

@@ -24,11 +24,19 @@ public class AwaitingDocumentsTaskManagement implements AwaitingDocumentsInterna
 
     @Transactional
     @Override
-    public void markAsReceived(UUID accountId, UUID awaitingDocumentTaskId) {
-        awaitingDocumentTaskRepository.findById(awaitingDocumentTaskId).ifPresent(task -> {
+    public Optional<AwaitingDocumentTaskDTO> markAsReceived(UUID accountId, UUID awaitingDocumentTaskId) {
+        Optional<AwaitingDocumentTask> awaitingDocumentTask =
+                awaitingDocumentTaskRepository.findById(awaitingDocumentTaskId);
+        if (awaitingDocumentTask.isPresent()) {
+            AwaitingDocumentTask task = awaitingDocumentTask.get();
             task.setStatus(AwaitingTaskStatus.RECEIVED);
             awaitingDocumentTaskRepository.save(task);
-        });
+            return Optional.of(
+                    new AwaitingDocumentTaskDTO(accountId, awaitingDocumentTaskId, task.getRentalProcessId()));
+        } else {
+            log.error("No task found with id: {}", awaitingDocumentTaskId);
+            return Optional.empty();
+        }
     }
 
     @Transactional(readOnly = true)

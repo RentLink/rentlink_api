@@ -1,6 +1,7 @@
-package com.rentlink.rentlink.manage_user_settings;
+package com.rentlink.rentlink.common;
 
 import com.rentlink.rentlink.manage_files.FileMetadata;
+import com.rentlink.rentlink.manage_user_settings.FileExtension;
 
 public record DocumentDTO(String name, FileExtension extension) {
 

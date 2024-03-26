@@ -5,6 +5,7 @@ import com.rentlink.rentlink.manage_files.MimebodyPartToSave;
 import com.rentlink.rentlink.manage_notifications.NotificationDTO;
 import com.rentlink.rentlink.manage_notifications.NotificationsWebSocketHandler;
 import com.rentlink.rentlink.manage_notifications.Priority;
+import com.rentlink.rentlink.manage_rental_process.RentalProcessInternalAPI;
 import com.sun.mail.imap.IMAPFolder;
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
@@ -38,6 +39,7 @@ public class EmailListener extends MessageCountAdapter {
     private final FilesManagerInternalAPI filesManagerInternalAPI;
     private final AwaitingDocumentsInternalAPI awaitingDocumentsInternalAPI;
     private final NotificationsWebSocketHandler notificationsWebSocketHandler;
+    private final RentalProcessInternalAPI rentalProcessInternalAPI;
     private final ExecutorService keepAliveExecutor = Executors.newSingleThreadExecutor();
     private final ExecutorService emailListenerExecutor = Executors.newSingleThreadExecutor();
 
@@ -49,12 +51,14 @@ public class EmailListener extends MessageCountAdapter {
             @Value("${rentlink.email.port}") String emailPort,
             FilesManagerInternalAPI filesManagerInternalAPI,
             AwaitingDocumentsInternalAPI awaitingDocumentsInternalAPI,
+            RentalProcessInternalAPI rentalProcessInternalAPI,
             NotificationsWebSocketHandler notificationsWebSocketHandler)
             throws MessagingException {
 
         this.filesManagerInternalAPI = filesManagerInternalAPI;
         this.awaitingDocumentsInternalAPI = awaitingDocumentsInternalAPI;
         this.notificationsWebSocketHandler = notificationsWebSocketHandler;
+        this.rentalProcessInternalAPI = rentalProcessInternalAPI;
         init(username, password, emailHost, emailPort);
     }
 
@@ -101,12 +105,15 @@ public class EmailListener extends MessageCountAdapter {
                         }
                         filesManagerInternalAPI.saveMimeFiles(files);
                         matchingTask.ifPresent(task -> {
-                            awaitingDocumentsInternalAPI.markAsReceived(task.accountId(), task.id());
+                            awaitingDocumentsInternalAPI
+                                    .markAsReceived(task.accountId(), task.id())
+                                    .ifPresent(taskDTO -> rentalProcessInternalAPI.advanceProcessOnIncomingDocuments(
+                                            taskDTO.rentalProcessId(), taskDTO.accountId()));
                             notificationsWebSocketHandler.sendNotification(
                                     task.accountId(),
                                     NotificationDTO.createNewNotification(
-                                            "New documents received",
-                                            "Rental process files received from %s".formatted(email),
+                                            "Otrzymano pliki procesu wynajmu",
+                                            "Pliki nadesłane przez %s".formatted(email),
                                             Priority.HIGH));
                         });
                     } catch (IOException | MessagingException e) {

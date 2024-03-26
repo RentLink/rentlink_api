@@ -16,4 +16,6 @@ interface RentalProcessExternalAPI {
             throws JsonProcessingException;
 
     RentalProcessDTO rejectRentalProcess(UUID rentalProcessId, UUID accountId);
+
+    AwaitingRentalProcessDocsDTO getAwaitingRentalProcessDocs(UUID rentalProcessId, UUID accountId);
 }

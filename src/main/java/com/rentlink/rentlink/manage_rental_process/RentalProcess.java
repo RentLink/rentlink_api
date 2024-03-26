@@ -45,6 +45,10 @@ class RentalProcess {
     @Column(name = "current_step_id")
     private UUID currentStepId;
 
+    @Column(name = "current_step_type")
+    @Enumerated(EnumType.STRING)
+    private ProcessStepType currentStepType;
+
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Instant updatedAt;
@@ -60,7 +64,9 @@ class RentalProcess {
                         .filter(processDataInputDTO -> !processDataInputDTO.isOptional())
                         .allMatch(processDataInputDTO -> processDataInputDTO.value() == null))
                 .min(Comparator.comparing(ProcessStepDTO::order))
-                .orElseThrow(RuntimeException::new)
+                .orElse(definition.steps().stream()
+                        .max(Comparator.comparing(ProcessStepDTO::order))
+                        .get())
                 .stepId();
         return this;
     }
@@ -95,11 +101,17 @@ class RentalProcess {
                 .orElseThrow(RuntimeException::new);
     }
 
-    ProcessStepDTO currentStep() {
-        return definition.steps().stream()
-                .filter(processStepDTO -> processStepDTO.stepId().equals(currentStepId))
-                .findFirst()
-                .orElseThrow(RuntimeException::new);
+    RentalProcess calculateCurrentStepType() {
+        this.currentStepType = definition.steps().stream()
+                .filter(processStepDTO -> processStepDTO.inputs().stream()
+                        .filter(processDataInputDTO -> !processDataInputDTO.isOptional())
+                        .allMatch(processDataInputDTO -> processDataInputDTO.value() == null))
+                .min(Comparator.comparing(ProcessStepDTO::order))
+                .orElse(definition.steps().stream()
+                        .max(Comparator.comparing(ProcessStepDTO::order))
+                        .get())
+                .type();
+        return this;
     }
 
     Boolean isProcessRejected() {

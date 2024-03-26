@@ -89,7 +89,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab1"),
                 "Oczekiwanie na dokumenty",
                 4,
-                ProcessStepType.STEP,
+                ProcessStepType.AWAITING_DOCUMENTS,
                 Collections.emptyList());
     }
 
