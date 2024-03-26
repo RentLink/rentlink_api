@@ -30,7 +30,8 @@ class EmailOrderManagement implements EmailOrderInternalAPI {
     @Transactional
     @Async
     public void acceptEmailSendOrder(UUID accountId, InternalEmailOrderDTO emailOrderDTO) {
-        log.info("Received email order to send to {}", emailOrderDTO.email());
+        log.info(
+                "Received email order to send to {} with attachments {}", emailOrderDTO.email(), emailOrderDTO.files());
         var files =
                 filesManagerInternalAPI.getFiles(accountId.toString(), new HashSet<>(emailOrderDTO.files())).stream()
                         .map(FileDTO::file)
@@ -39,10 +40,12 @@ class EmailOrderManagement implements EmailOrderInternalAPI {
         var emailSendTrial = emailSender.executeEmailSend(emailOrderDTO, files);
         var emailOrder = emailOrderMapper.map(emailOrderDTO);
         if (emailSendTrial.isSuccess()) {
-            log.info("Email order sent successfully to {} saving to db to send it later", emailOrderDTO.email());
+            log.info(
+                    "Email order sent successfully to {} with attachments {}",
+                    emailOrderDTO.email(),
+                    emailOrderDTO.files());
             emailOrder.setStatus(EmailOrderStatus.SENT);
             emailOrder.setSentAt(LocalDateTime.now());
-
         } else {
             log.error(
                     "Failed to send email order, saving it to database, we will retry later",

@@ -1,7 +1,6 @@
 package com.rentlink.rentlink.manage_files;
 
 import jakarta.mail.MessagingException;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -74,8 +73,9 @@ public class FilesManagement implements FilesManagerInternalAPI {
         }
         try (var stream = Files.list(Paths.get(rootFilesDir + subdirectory))) {
             return stream.filter(path -> !Files.isDirectory(path))
-                    .filter(path -> fileNames.contains(path.getFileName().toString()))
-                    .map(path -> new File(path.toUri()))
+                    .filter(path -> fileNames.contains(
+                            FilenameUtils.getBaseName(path.getFileName().toString())))
+                    .map(Path::toFile)
                     .map(file -> new FileDTO(file.getName(), file))
                     .toList();
         } catch (IOException e) {

@@ -7,7 +7,7 @@ public interface AwaitingDocumentsInternalAPI {
 
     void acceptAwaitingDocumentTask(UUID accountId, UUID rentalProcessId, String email, UUID recognitionCode);
 
-    void markAsReceived(UUID accountId, UUID awaitingDocumentTaskId);
+    Optional<AwaitingDocumentTaskDTO> markAsReceived(UUID accountId, UUID awaitingDocumentTaskId);
 
     Optional<AwaitingDocumentTaskDTO> getMatchingTask(String subject);
 }

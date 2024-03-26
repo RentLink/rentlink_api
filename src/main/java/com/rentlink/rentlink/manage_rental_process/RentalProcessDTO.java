@@ -9,6 +9,7 @@ record RentalProcessDTO(
         UUID rentalOptionId,
         RentalProcessStatus status,
         ProcessDefinitionDTO definition,
+        ProcessStepType currentStepType,
         UUID previousStepId,
         UUID currentStepId)
         implements RentalProcessDTOBuilder.With {}

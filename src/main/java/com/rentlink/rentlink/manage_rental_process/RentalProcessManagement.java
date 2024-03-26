@@ -2,9 +2,11 @@ package com.rentlink.rentlink.manage_rental_process;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rentlink.rentlink.common.DocumentDTO;
 import com.rentlink.rentlink.manage_email_inbound.AwaitingDocumentsInternalAPI;
 import com.rentlink.rentlink.manage_email_outbound.EmailOrderInternalAPI;
 import com.rentlink.rentlink.manage_email_outbound.InternalEmailOrderDTO;
+import com.rentlink.rentlink.manage_files.FilesManagerInternalAPI;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +35,8 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
 
     private final AwaitingDocumentsInternalAPI awaitingDocumentsInternalAPI;
 
+    private final FilesManagerInternalAPI filesManagerInternalAPI;
+
     private final ObjectMapper objectMapper;
 
     @Transactional
@@ -47,6 +51,7 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
                 .nullId()
                 .withAccountId(accountId)
                 .calculateCurrentStepId()
+                .calculateCurrentStepType()
                 .calculateStatus();
         RentalProcess saved = rentalProcessRepository.save(rentalProcess);
         RentalProcessDTO result = rentalProcessMapper.map(saved);
@@ -93,7 +98,7 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
             throw new RuntimeException("Process is finished");
         }
         rentalProcessMapper.update(rentalProcessDTO, rentalProcess);
-        rentalProcess.calculateCurrentStepId().calculateStatus();
+        rentalProcess.calculateCurrentStepId().calculateCurrentStepType().calculateStatus();
         rentalProcessRepository.updateDefinition(
                 rentalProcess.getId(),
                 objectMapper.writeValueAsString(rentalProcess.getDefinition()),
@@ -137,5 +142,33 @@ class RentalProcessManagement implements RentalProcessExternalAPI, RentalProcess
         return rentalProcessRepository.findAllByUpdatedAtBefore(instant).stream()
                 .map(internalRentalProcessMapper::map)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public AwaitingRentalProcessDocsDTO getAwaitingRentalProcessDocs(UUID rentalProcessId, UUID accountId) {
+        List<DocumentDTO> files = filesManagerInternalAPI
+                .getFileNames("%s/rental-process/%s".formatted(accountId.toString(), rentalProcessId.toString()))
+                .stream()
+                .map(DocumentDTO::fromFileMetadata)
+                .toList();
+        return new AwaitingRentalProcessDocsDTO(files);
+    }
+
+    @Transactional
+    @Override
+    public void advanceProcessOnIncomingDocuments(UUID rentalProcessId, UUID accountId) {
+        rentalProcessRepository.findByAccountIdAndId(accountId, rentalProcessId).ifPresent(rentalProcess -> {
+            ProcessStepDTO awaitingDocsStep = rentalProcess.getDefinition().steps().stream()
+                    .filter(step -> step.type().equals(ProcessStepType.AWAITING_DOCUMENTS))
+                    .findFirst()
+                    .orElseThrow(RuntimeException::new);
+            ProcessStepDTO nextStep = rentalProcess.getDefinition().steps().stream()
+                    .filter(step -> step.order() == awaitingDocsStep.order() + 1)
+                    .findFirst()
+                    .orElseThrow(RuntimeException::new);
+            rentalProcess.setCurrentStepId(nextStep.stepId());
+            rentalProcess.setCurrentStepType(nextStep.type());
+            rentalProcessRepository.save(rentalProcess);
+        });
     }
 }

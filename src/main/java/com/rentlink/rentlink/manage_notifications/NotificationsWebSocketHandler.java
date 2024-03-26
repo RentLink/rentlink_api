@@ -55,15 +55,14 @@ public class NotificationsWebSocketHandler extends AbstractWebSocketHandler {
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         String payload = message.getPayload().replace("\"", "");
         log.info("Received message: {}", payload);
-        if(payload.equals("ping")) {
+        if (payload.equals("ping")) {
             session.sendMessage(new TextMessage("pong"));
         } else {
             sessions.forEach((id, s) -> {
                 try {
                     if (s.getId().endsWith(session.getId())) {
                         UUID accountId = UUID.fromString(id.split(":")[0]);
-                        Set<UUID> notificationIds = Arrays.stream(
-                                        payload.split(","))
+                        Set<UUID> notificationIds = Arrays.stream(payload.split(","))
                                 .filter(msg -> !msg.isEmpty())
                                 .filter(msg -> !msg.isBlank())
                                 .map(UUID::fromString)

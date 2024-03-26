@@ -143,6 +143,7 @@ CREATE TABLE IF NOT EXISTS rental_process
     status VARCHAR(50),
     definition JSONB,
     current_step_id UUID,
+    current_step_type VARCHAR(50),
     updated_at timestamp
 );
 
