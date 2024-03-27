@@ -56,7 +56,7 @@ public class NotificationsWebSocketHandler extends AbstractWebSocketHandler {
         String payload = message.getPayload().replace("\"", "");
         log.info("Received message: {}", payload);
         if (payload.equals("ping")) {
-            session.sendMessage(new TextMessage("pong"));
+            session.sendMessage(new TextMessage("\"pong\""));
         } else {
             sessions.forEach((id, s) -> {
                 try {
