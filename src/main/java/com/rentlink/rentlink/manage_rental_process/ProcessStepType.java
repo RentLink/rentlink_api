@@ -1,7 +1,8 @@
 package com.rentlink.rentlink.manage_rental_process;
 
 enum ProcessStepType {
-    STEP,
+    INITIAL_COMMUNICATION,
+    MEETING,
     SEND_DOCS,
     AWAITING_DOCUMENTS,
     VALIDATION,
