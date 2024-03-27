@@ -98,7 +98,6 @@ CREATE TABLE IF NOT EXISTS unit
     unit_type varchar(20),
     rental_type varchar(20),
     heating_type varchar(20),
-    rental_option_type varchar(20),
     surface numeric,
     rooms_no numeric,
     city varchar(50),
@@ -112,7 +111,43 @@ CREATE TABLE IF NOT EXISTS unit
     insurance_company varchar(50),
     insurance_due_date date,
     cooperative_fee numeric(10,2),
-    rental_fee numeric(10,2)
+    rental_fee numeric(10,2),
+    district varchar(255),
+    estate_name varchar(255),
+    floor numeric,
+    total_floors numeric,
+    doorbell_code varchar(20),
+    is_elevator_in_building bool,
+    development_type varchar(50),
+    windows_type varchar(50),
+-- GARAGE
+    garage_number varchar(50),
+    garage_level varchar(50),
+    garage_entrance_type varchar(50),
+    garage_entrance_code varchar(50),
+    garage_type varchar(50)
+);
+
+CREATE TABLE IF NOT EXISTS unit_equipment
+(
+    id            UUID PRIMARY KEY,
+    unit_id UUID NOT NULL,
+    type         varchar(50)
+);
+
+CREATE TABLE IF NOT EXISTS associated_room
+(
+    id            UUID PRIMARY KEY,
+    unit_id UUID NOT NULL,
+    type         varchar(50)
+);
+
+CREATE TABLE IF NOT EXISTS utility
+(
+    id            UUID PRIMARY KEY,
+    unit_id UUID NOT NULL,
+    description        varchar(255),
+    type         varchar(50)
 );
 
 CREATE TABLE IF NOT EXISTS rental_option
@@ -173,10 +208,19 @@ CREATE TABLE IF NOT EXISTS awaiting_documents_task
 );
 
 
-INSERT INTO unit (id, account_id, name, unit_type, rental_type, heating_type, rental_option_type, surface, rooms_no, city, postal_code, street, building_no, apartment_no, country, additional_information, insurance_number, insurance_company, insurance_due_date, cooperative_fee, rental_fee) VALUES ('132eb354-a7bf-4e11-b9f7-48ebe817e1f7','f6a401de-8408-45e0-b083-49eb9723b573', 'Testowa', 'APARTMENT', 'WHOLE', 'TO', null, 111, 3, 'Testowe', '01-259', 'Testowa', '12a', '12', 'Polska', 'Testowe dod informacje', 'Testowa', 'Testowa', '2024-03-29', 123.00, 231.00);
-INSERT INTO unit (id, account_id, name, unit_type, rental_type, heating_type, rental_option_type, surface, rooms_no, city, postal_code, street, building_no, apartment_no, country, additional_information, insurance_number, insurance_company, insurance_due_date, cooperative_fee, rental_fee) VALUES ('5e5905e1-a79e-4c5c-b987-1268c0bb271b','f6a401de-8408-45e0-b083-49eb9723b573', 'Testowa Dzielona', 'APARTMENT', 'ROOMS', 'TO', null, 123, 3, 'Testowe', '01-259', 'Testowa', '12c', '14', 'Testowe', 'Test', 'Test', 'test', '2024-03-29', 13231.00, 123123.00);
+INSERT INTO rentlink.unit (id, account_id, name, unit_type, rental_type, heating_type, surface, rooms_no, city, postal_code, street, building_no, apartment_no, country, additional_information, insurance_number, insurance_company, insurance_due_date, cooperative_fee, rental_fee, district, estate_name, floor, total_floors, doorbell_code, is_elevator_in_building, development_type, windows_type) VALUES ('a42e3bd2-d31b-4b25-aba1-246bdec856ce', 'f6a401de-8408-45e0-b083-49eb9723b573', 'Testowa cale miejsce', 'APARTMENT', 'ENTIRE_PLACE', 'URBAN', 0, 0, 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', '2024-03-27', 0.00, 0.00, 'string', 'string', 0, 0, 'string', true, 'BLOCK', 'PLASTIC');
+INSERT INTO rentlink.unit (id, account_id, name, unit_type, rental_type, heating_type, surface, rooms_no, city, postal_code, street, building_no, apartment_no, country, additional_information, insurance_number, insurance_company, insurance_due_date, cooperative_fee, rental_fee, district, estate_name, floor, total_floors, doorbell_code, is_elevator_in_building, development_type, windows_type) VALUES ('a42e3bd2-d31b-4b25-aba1-246bdec856c1', 'f6a401de-8408-45e0-b083-49eb9723b573', 'Testowa pokoje', 'APARTMENT', 'ROOMS', 'URBAN', 0, 0, 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'string', '2024-03-27', 0.00, 0.00, 'string', 'string', 0, 0, 'string', true, 'BLOCK', 'PLASTIC');
 
-INSERT INTO rental_option (id, account_id, unit_id, name) VALUES ('b536323e-93b4-4afe-8f39-d11d7d4447b7','f6a401de-8408-45e0-b083-49eb9723b573', '132eb354-a7bf-4e11-b9f7-48ebe817e1f7', 'Całe miejsce');
-INSERT INTO rental_option (id, account_id, unit_id, name) VALUES ('0b6a8d06-a1e8-4b34-a9d5-8c2dfa70eac5','f6a401de-8408-45e0-b083-49eb9723b573', '5e5905e1-a79e-4c5c-b987-1268c0bb271b', 'Pokój nr 1');
-INSERT INTO rental_option (id, account_id, unit_id, name) VALUES ('3ea6e5a2-1621-41f1-b3c0-9bf4b661e629','f6a401de-8408-45e0-b083-49eb9723b573', '5e5905e1-a79e-4c5c-b987-1268c0bb271b', 'Pokój nr 2');
-INSERT INTO rental_option (id, account_id, unit_id, name) VALUES ('184ba51f-af69-407a-aa3e-6dd1748abc74','f6a401de-8408-45e0-b083-49eb9723b573', '5e5905e1-a79e-4c5c-b987-1268c0bb271b', 'Pokój nr 3');
+INSERT INTO rentlink.associated_room (id, unit_id, type) VALUES ('c9ebb3cb-184a-4dfe-80f3-f7a6dde58a71', 'a42e3bd2-d31b-4b25-aba1-246bdec856ce', 'HALLWAY');
+INSERT INTO rentlink.unit_equipment (id, unit_id, type) VALUES ('328adfff-461b-4b69-8e6f-9b8045d1c955', 'a42e3bd2-d31b-4b25-aba1-246bdec856ce', 'ROOM_FURNITURE');
+INSERT INTO rentlink.utility (id, unit_id, type) VALUES ('aab4502c-d278-4666-a2fb-b37a140daadf', 'a42e3bd2-d31b-4b25-aba1-246bdec856ce', 'COLD_WATER');
+
+INSERT INTO rentlink.associated_room (id, unit_id, type) VALUES ('c9ebb3cb-184a-4dfe-80f3-f7a6dde58a72', 'a42e3bd2-d31b-4b25-aba1-246bdec856c1', 'HALLWAY');
+INSERT INTO rentlink.unit_equipment (id, unit_id, type) VALUES ('328adfff-461b-4b69-8e6f-9b8045d1c956', 'a42e3bd2-d31b-4b25-aba1-246bdec856c1', 'ROOM_FURNITURE');
+INSERT INTO rentlink.utility (id, unit_id, description, type) VALUES ('aab4502c-d278-4666-a2fb-b37a140daade', 'a42e3bd2-d31b-4b25-aba1-246bdec856c1', '500 MB/S', 'INTERNET');
+
+
+INSERT INTO rental_option (id, account_id, unit_id, name) VALUES ('a42e3bd2-d31b-4b25-aba1-246bdec856ce','f6a401de-8408-45e0-b083-49eb9723b573', 'a42e3bd2-d31b-4b25-aba1-246bdec856ce', 'Całe miejsce');
+INSERT INTO rental_option (id, account_id, unit_id, name) VALUES ('0b6a8d06-a1e8-4b34-a9d5-8c2dfa70eac5','f6a401de-8408-45e0-b083-49eb9723b573', 'a42e3bd2-d31b-4b25-aba1-246bdec856c1', 'Pokój nr 1');
+INSERT INTO rental_option (id, account_id, unit_id, name) VALUES ('3ea6e5a2-1621-41f1-b3c0-9bf4b661e629','f6a401de-8408-45e0-b083-49eb9723b573', 'a42e3bd2-d31b-4b25-aba1-246bdec856c1', 'Pokój nr 2');
+INSERT INTO rental_option (id, account_id, unit_id, name) VALUES ('184ba51f-af69-407a-aa3e-6dd1748abc74','f6a401de-8408-45e0-b083-49eb9723b573', 'a42e3bd2-d31b-4b25-aba1-246bdec856c1', 'Pokój nr 3');
