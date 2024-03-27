@@ -49,7 +49,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffabf"),
                 "Wstępny kontakt",
                 1,
-                ProcessStepType.STEP,
+                ProcessStepType.INITIAL_COMMUNICATION,
                 List.of(nameStep, phoneStep));
     }
 
@@ -60,7 +60,7 @@ class ProcessDefinitionManagement implements ProcessDefinitionExternalAPI {
                 UUID.fromString("e84a695e-a2c2-4cdd-b682-df81828ffab2"),
                 "Pokazanie mieszkania",
                 2,
-                ProcessStepType.STEP,
+                ProcessStepType.MEETING,
                 List.of(name));
     }
 
