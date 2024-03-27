@@ -66,7 +66,7 @@ class UnitManagement implements UnitExternalAPI {
         unit.setAccountId(accountId);
 
         UnitDTO result = unitMapper.map(unitRepository.save(unit));
-        if (result.rentalType().equals(RentalType.WHOLE)) {
+        if (result.rentalType().equals(RentalType.ENTIRE_PLACE)) {
             Set<RentalOptionDTO> rentalOptionResult = Set.of(
                     rentalOptionInternalAPI.upsert(new RentalOptionDTO(null, "Całe miejsce"), result.id(), accountId));
             return result.withRentalOptions(rentalOptionResult);
