@@ -1,4 +1,4 @@
-package com.rentlink.rentlink.manage_rental_process;
+package com.rentlink.rentlink.manage_rental_process.definition;
 
 import static com.rentlink.rentlink.common.CustomHeaders.X_USER_HEADER;
 

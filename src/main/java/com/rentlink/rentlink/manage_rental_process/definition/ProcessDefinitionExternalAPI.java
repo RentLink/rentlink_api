@@ -1,9 +1,9 @@
-package com.rentlink.rentlink.manage_rental_process;
+package com.rentlink.rentlink.manage_rental_process.definition;
 
 import java.util.List;
 import java.util.UUID;
 
-interface ProcessDefinitionExternalAPI {
+public interface ProcessDefinitionExternalAPI {
 
     List<ProcessDefinitionDTO> getDefinitions(UUID accountId);
 }
