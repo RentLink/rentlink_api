@@ -1,5 +1,9 @@
 package com.rentlink.rentlink.manage_rental_process;
 
+import com.rentlink.rentlink.manage_rental_process.definition.ProcessDataInputDTO;
+import com.rentlink.rentlink.manage_rental_process.definition.ProcessDefinitionDTO;
+import com.rentlink.rentlink.manage_rental_process.definition.ProcessStepDTO;
+import com.rentlink.rentlink.manage_rental_process.definition.ProcessStepType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

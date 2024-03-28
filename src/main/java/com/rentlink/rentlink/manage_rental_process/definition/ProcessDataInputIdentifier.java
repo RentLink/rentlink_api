@@ -1,4 +1,4 @@
-package com.rentlink.rentlink.manage_rental_process;
+package com.rentlink.rentlink.manage_rental_process.definition;
 
 public enum ProcessDataInputIdentifier {
     DOC_LIST,
